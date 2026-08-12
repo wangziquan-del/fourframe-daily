@@ -305,6 +305,19 @@ body = f'''<!DOCTYPE html>
 .eyebrow{{color:var(--gold);letter-spacing:.34em;font-size:11px}}h1{{font-family:Cinzel,serif;font-size:clamp(30px,4.5vw,52px);margin:8px 0 6px}}
 .sub{{color:var(--ink2);font-size:12px}}.meta{{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:14px 0;color:var(--ink3);font:11px 'JetBrains Mono',monospace}}
 .meta b{{color:var(--gold)}}
+/* 向渊行 · 深渊深海主题封面 */
+.hero{{position:relative;overflow:hidden;text-align:center;padding:72px 30px 48px;border-radius:0 0 54px 54px;color:#e8f4f8;margin-bottom:22px;border:1px solid rgba(64,150,175,.28);box-shadow:0 22px 60px rgba(2,18,28,.4)}}
+.hero-bg{{position:absolute;inset:0;z-index:0;background:radial-gradient(circle at 14% 18%,rgba(24,86,112,.55),transparent 42%),radial-gradient(circle at 86% 78%,rgba(8,44,60,.7),transparent 46%),linear-gradient(158deg,#031b27 0%,#0b3442 46%,#02111b 100%)}}
+.hero-light{{position:absolute;inset:-25% -12%;z-index:0;pointer-events:none;background:linear-gradient(105deg,transparent 41%,rgba(130,210,230,.12) 46%,rgba(212,175,55,.09) 50%,transparent 55%);animation:rayShift 9s ease-in-out infinite}}
+.hero-motes{{position:absolute;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle at 20% 30%,rgba(150,225,245,.55) 0 1px,transparent 2px),radial-gradient(circle at 70% 65%,rgba(150,225,245,.4) 0 1px,transparent 2px),radial-gradient(circle at 45% 85%,rgba(212,175,55,.35) 0 1px,transparent 2px);background-size:170px 130px,210px 180px,150px 120px;animation:moteFloat 16s ease-in-out infinite;opacity:.6}}
+.hero-content{{position:relative;z-index:1}}
+.hero .eyebrow{{color:rgba(125,195,215,.9);letter-spacing:.4em}}
+.hero h1{{color:#f2fafc;text-shadow:0 0 30px rgba(80,185,215,.4);background:linear-gradient(180deg,#eaffff 0%,#9fd8e8 52%,#d4af37 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}}
+.hero-sub{{color:rgba(185,225,235,.85);font-size:13px;letter-spacing:.07em}}
+.hero-meta{{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:16px;color:rgba(140,200,218,.78);font:11px 'JetBrains Mono',monospace}}
+.hero-meta b{{color:#d4af37}}
+@keyframes rayShift{{0%,100%{{transform:translateX(-4%)}}50%{{transform:translateX(4%)}}}}
+@keyframes moteFloat{{0%,100%{{transform:translateY(0)}}50%{{transform:translateY(-12px)}}}}
 .tabs{{display:flex;gap:8px;justify-content:center;margin:16px 0}}.tabs button{{padding:9px 22px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink2);font:600 13px 'Noto Sans SC';cursor:pointer}}
 .tabs button.active{{background:var(--gold);color:#fff;border-color:var(--gold)}}
 .tf-tab{{display:none}}.tf-tab.active{{display:block}}
@@ -335,10 +348,14 @@ footer{{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26
 @media(max-width:1000px){{.cards{{grid-template-columns:1fr 1fr}}}}
 @media(max-width:640px){{.cards{{grid-template-columns:1fr}}.strat-bar{{grid-template-columns:1fr}}}}
 </style></head><body><div class="shell">
-<header><div class="eyebrow">FOUR-FRAME DAILY SELECTION</div>
-<h1>四框架每日选品 · 三级别</h1>
-<div class="sub">缠论 · MACD/RSI · 江恩 · 量价 ｜ 15分钟 / 60分钟 / 日线 ｜ 点击品种看K线+策略</div>
-<div class="meta"><span>日线数据 <b>{last_daily}</b></span><span>生成 <b>{now}</b></span><span>品种 <b>{len(universe)}</b></span><span>{sina_note}</span></div></header>
+<header class="hero">
+<div class="hero-bg"></div><div class="hero-light"></div><div class="hero-motes"></div>
+<div class="hero-content">
+<div class="eyebrow">FOUR-FRAME DAILY SELECTION · 向渊行</div>
+<h1>四框架每日选品</h1>
+<div class="hero-sub">缠论 · MACD/RSI · 江恩 · 量价 — 15分钟 / 60分钟 / 日线</div>
+<div class="hero-meta"><span>日线数据 <b>{last_daily}</b></span><span>生成 <b>{now}</b></span><span>品种 <b>{len(universe)}</b></span><span>{sina_note}</span></div>
+</div></header>
 <nav class="tabs"><button class="active" onclick="showTf('15min',this)">15分钟</button><button onclick="showTf('60min',this)">60分钟</button><button onclick="showTf('日线',this)">日线</button></nav>
 {render_tab('15min', groups_by_tf['15min'])}
 {render_tab('60min', groups_by_tf['60min'])}
