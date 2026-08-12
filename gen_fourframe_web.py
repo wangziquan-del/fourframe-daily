@@ -276,6 +276,40 @@ now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
 last_daily = max((cache[s]['bars'][-1]['time'] for s in universe if cache[s]['bars']), default='?')
 sina_note = '⚠ 15/60min不可达·仅日线' if sina_offline else '15/60min已更新'
 
+# ===== 三级别汇总(多级别共振) =====
+CAT_LABEL = {'best': '好', 'worst': '坏', 'neutral': '中性', 'value': '性价比'}
+CAT_TONE = {'best': 'pos', 'worst': 'neg', 'neutral': 'neu', 'value': 'val'}
+cross = {}
+for tf in ['15min', '60min', '日线']:
+    for title, key, items in groups_by_tf[tf]:
+        for it in items:
+            sym = it['sym']
+            cross.setdefault(sym, {'name': it['name'], 'price': it['price'], 'tfs': {}})
+            cross[sym]['tfs'][tf] = key
+# 共振度: 偏多级别数 - 偏空级别数
+for sym, c in cross.items():
+    bull = sum(1 for tf in ['15min', '60min', '日线'] if c['tfs'].get(tf) in ('best', 'value'))
+    bear = sum(1 for tf in ['15min', '60min', '日线'] if c['tfs'].get(tf) == 'worst')
+    c['bull'] = bull; c['bear'] = bear
+    c['res'] = '🟢强偏多' if bull >= 2 and bear == 0 else ('🔴强偏空' if bear >= 2 and bull == 0 else ('🟡偏多' if bull > bear else ('🔵偏空' if bear > bull else '⚪震荡/分散')))
+cross_items = sorted(cross.items(), key=lambda kv: (kv[1]['bull'] - kv[1]['bear']), reverse=True)
+
+def render_summary():
+    h = ['<div class="tf-tab" id="tf-sum">', '<h3 class="cat-title">🌐 三级别汇总 · 多级别共振（15min / 60min / 日线）</h3>',
+         '<div class="sum-wrap"><table class="sum-tb"><thead><tr><th>品种</th><th>15分钟</th><th>60分钟</th><th>日线</th><th>共振</th></tr></thead><tbody>']
+    for sym, c in cross_items:
+        cells = []
+        for tf in ['15min', '60min', '日线']:
+            cat = c['tfs'].get(tf, '')
+            if cat:
+                tone = CAT_TONE[cat]
+                cells.append(f'<td class="sum-{tone}">{CAT_LABEL[cat]}</td>')
+            else:
+                cells.append('<td class="sum-none">—</td>')
+        h.append(f'<tr><td class="sum-sym">{sym}</td><td class="sum-name">{c["name"]}</td>' + ''.join(cells) + f'<td class="sum-res">{c["res"]}</td></tr>')
+    h.append('</tbody></table></div></div>')
+    return '\n'.join(h)
+
 def render_card(it, tf):
     return f'''<article class="pcard" onclick="openDetail('{tf}','{it['sym']}')">
 <div class="phead"><span class="sym">{it['sym']}</span><span class="pname">{it['name']}</span><span class="pprice">{it['price']:,.0f}</span><span class="pscore">{it['score']:+.0f}</span></div>
@@ -318,6 +352,19 @@ body = f'''<!DOCTYPE html>
 .hero-meta b{{color:#d4af37}}
 @keyframes rayShift{{0%,100%{{transform:translateX(-4%)}}50%{{transform:translateX(4%)}}}}
 @keyframes moteFloat{{0%,100%{{transform:translateY(0)}}50%{{transform:translateY(-12px)}}}}
+/* 三级别汇总 */
+.sum-wrap{{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:auto}}
+.sum-tb{{width:100%;border-collapse:collapse;font:12px 'JetBrains Mono',monospace;min-width:560px}}
+.sum-tb th{{position:sticky;top:0;background:#142432;color:#9fb3c1;font:11px 'Noto Sans SC';padding:10px 12px;border-bottom:2px solid var(--gold);text-align:left}}
+.sum-tb td{{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--ink2)}}
+.sum-tb tr:hover td{{background:#faf6ec}}
+.sum-sym{{font-weight:700;color:var(--ink)}}.sum-name{{color:var(--ink3);font-size:11px}}
+.sum-pos{{color:var(--emerald);font-weight:700}}
+.sum-neg{{color:var(--rose);font-weight:700}}
+.sum-neu{{color:var(--gold)}}
+.sum-val{{color:var(--blue);font-weight:700}}
+.sum-none{{color:var(--ink3);opacity:.4}}
+.sum-res{{font:11px 'Noto Sans SC';white-space:nowrap}}
 .tabs{{display:flex;gap:8px;justify-content:center;margin:16px 0}}.tabs button{{padding:9px 22px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink2);font:600 13px 'Noto Sans SC';cursor:pointer}}
 .tabs button.active{{background:var(--gold);color:#fff;border-color:var(--gold)}}
 .tf-tab{{display:none}}.tf-tab.active{{display:block}}
@@ -356,10 +403,11 @@ footer{{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26
 <div class="hero-sub">缠论 · MACD/RSI · 江恩 · 量价 — 15分钟 / 60分钟 / 日线</div>
 <div class="hero-meta"><span>日线数据 <b>{last_daily}</b></span><span>生成 <b>{now}</b></span><span>品种 <b>{len(universe)}</b></span><span>{sina_note}</span></div>
 </div></header>
-<nav class="tabs"><button class="active" onclick="showTf('15min',this)">15分钟</button><button onclick="showTf('60min',this)">60分钟</button><button onclick="showTf('日线',this)">日线</button></nav>
+<nav class="tabs"><button class="active" onclick="showTf('15min',this)">15分钟</button><button onclick="showTf('60min',this)">60分钟</button><button onclick="showTf('日线',this)">日线</button><button onclick="showTf('sum',this)">🌐 汇总</button></nav>
 {render_tab('15min', groups_by_tf['15min'])}
 {render_tab('60min', groups_by_tf['60min'])}
 {render_tab('日线', groups_by_tf['日线'])}
+{render_summary()}
 <footer>数据源：日线=知几 · 15/60min=新浪实时 ｜ 每级别独立四框架评分 ｜ 每日 09:05/11:25/14:00/21:30 自动更新 ｜ 不构成投资建议</footer>
 <div id="modal" onclick="if(event.target===this)closeDetail()"><div class="mbox">
 <div class="mhead"><span class="sym" id="m-sym">—</span><span class="pname" id="m-name"></span><span class="pprice" id="m-price"></span><button class="close" onclick="closeDetail()">关闭 ✕</button></div>
