@@ -436,7 +436,7 @@ footer{{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26
 @media(max-width:1000px){{.cards{{grid-template-columns:1fr 1fr}}}}
 @media(max-width:640px){{.cards{{grid-template-columns:1fr}}.strat-bar{{grid-template-columns:1fr}}}}
 </style></head><body><div class="shell">
-<header class="prts-hero">
+<header class="prts-hero" onclick="document.getElementById('tf-15min').scrollIntoView({{behavior:'smooth'}})" style="cursor:pointer" title="点击进入选品">
 <div class="prts-top"><span>[PRTS v4.82] SYSTEM ARCHIVE // RESTRICTED ACCESS</span><span>[SECURITY CLEARANCE: LEVEL 4 REQUIRED]</span></div>
 <div class="prts-grid">
 <div class="prts-block"><div class="prts-bt">+-- TACTICAL MONITOR --------+</div><div>LAT: 31°14' N &nbsp;LON: 121°28' E</div><div>CATASTROPHE RISK: CLASS IV</div><div>ORIGINIUM DENSITY: 0.84%</div><div>MARKET VOLATILITY: HIGH</div><div class="prts-bc">+----------------------------+</div></div>
@@ -508,8 +508,8 @@ function drawKline(bars){{
   for(let i=0;i<n;i++){{const b=bars[i],up=b.c>=b.o;const vh=b.v/vmax*vpH;ctx.fillStyle=up?'rgba(192,80,80,.35)':'rgba(74,128,96,.35)';ctx.fillRect(xP(i)-cw/2,H-vh,cw,vh)}}
   ctx.fillStyle='#9c938e';ctx.font='10px JetBrains Mono';ctx.fillText('H '+hi.toLocaleString(),px+6,16);ctx.fillText('L '+lo.toLocaleString(),px+6,H-4);
 }}
-function exportCSV(){{let csv='品种,名称,级别,分类,评分,现价,方向,进场,止盈1,止盈2,止损\n';['15min','60min','日线'].forEach(tf=>{{Object.keys((window.KDATA||{{}})[tf]||{{}}).forEach(sym=>{{const d=(window.KDATA||{{}})[tf][sym],s=d.strat;csv+=[sym,d.name,tf,d.cat,d.score,d.price,s.dir,s.entry,s.tp1,s.tp2,s.sl].join(',')+'\n'}})}});const blob=new Blob(['﻿'+csv],{{type:'text/csv;charset=utf-8'}});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='四框架选品_'+new Date().toISOString().slice(0,10)+'.csv';a.click()}}
-function copyShare(){{const d=new Date().toLocaleString('zh-CN');let txt='四框架每日选品 '+d+'\n================\n';['15min','60min','日线'].forEach(tf=>{{txt+='\n【'+tf+'】\n';Object.keys((window.KDATA||{{}})[tf]||{{}}).forEach(sym=>{{const x=(window.KDATA||{{}})[tf][sym];txt+=sym+' '+x.name+' '+x.strat.dir+' 进场'+x.strat.entry+' 止盈'+x.strat.tp1+'/'+x.strat.tp2+' 止损'+x.strat.sl+'\n'}})}});navigator.clipboard.writeText(txt).then(()=>alert('已复制分享文本'))}}
+function exportCSV(){{let csv='品种,名称,级别,分类,评分,现价,方向,进场,止盈1,止盈2,止损\\n';['15min','60min','日线'].forEach(tf=>{{Object.keys((window.KDATA||{{}})[tf]||{{}}).forEach(sym=>{{const d=(window.KDATA||{{}})[tf][sym],s=d.strat;csv+=[sym,d.name,tf,d.cat,d.score,d.price,s.dir,s.entry,s.tp1,s.tp2,s.sl].join(',')+'\\n'}})}});const blob=new Blob(['﻿'+csv],{{type:'text/csv;charset=utf-8'}});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='四框架选品_'+new Date().toISOString().slice(0,10)+'.csv';a.click()}}
+function copyShare(){{const d=new Date().toLocaleString('zh-CN');let txt='四框架每日选品 '+d+'\\n================\\n';['15min','60min','日线'].forEach(tf=>{{txt+='\\n【'+tf+'】\\n';Object.keys((window.KDATA||{{}})[tf]||{{}}).forEach(sym=>{{const x=(window.KDATA||{{}})[tf][sym];txt+=sym+' '+x.name+' '+x.strat.dir+' 进场'+x.strat.entry+' 止盈'+x.strat.tp1+'/'+x.strat.tp2+' 止损'+x.strat.sl+'\\n'}})}});navigator.clipboard.writeText(txt).then(()=>alert('已复制分享文本'))}}
 document.addEventListener('keydown',e=>{{if(e.key==='Escape')closeDetail()}});
 </script>
 </div></body></html>'''
