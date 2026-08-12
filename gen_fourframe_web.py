@@ -32,9 +32,24 @@ NAMES = {
 def fetch_zhiji_daily(sym):
     url = f'{ZHIJI_BASE}?symbol={sym}&freq=D&cont=1&limit=120'
     try:
-        cmd = ['curl', '-s', '--max-time', '20', '-H', f'X-Guan-Key: {ZHIJI_API_KEY}', url]
-        r = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', timeout=25)
+        cmd = ['curl', '-s', '--max-time', '8', '-H', f'X-Guan-Key: {ZHIJI_API_KEY}', url]
+        r = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', timeout=12)
         return json.loads(r.stdout).get('bars', [])
+    except Exception:
+        return []
+
+def sina_daily(sym):
+    """新浪期货日K (CI里zhiji不可达时的兜底)"""
+    s = sym + '0'
+    url = f'https://stock2.finance.sina.com.cn/futures/api/jsonp.php/=/InnerFuturesNewService.getDailyKLine?symbol={s}'
+    try:
+        req = urllib.request.Request(url, headers={'Referer': 'https://finance.sina.com.cn', 'User-Agent': 'Mozilla/5.0'})
+        t = urllib.request.urlopen(req, timeout=15).read().decode('utf-8', 'replace')
+        m = re.search(r'\((\[.*\])\)', t, re.S)
+        if not m: return []
+        data = json.loads(m.group(1))
+        return [{'time': x['d'], 'open': float(x['o']), 'high': float(x['h']),
+                 'low': float(x['l']), 'close': float(x['c']), 'volume': float(x['v'])} for x in data]
     except Exception:
         return []
 
@@ -44,18 +59,31 @@ def load_cache():
             return json.load(open(CACHE, encoding='utf-8'))
         except Exception:
             pass
-    print('缓存不存在, 直连知几拉日线...')
+    print('缓存不存在, 直连抓日线(zhiji优先, sina兜底)...', flush=True)
     cache = {}
     all_syms = ['CU','AL','ZN','PB','NI','SN','AU','AG','RB','HC','SS','RU','BU','FU','SP','AO','BR',
                 'I','J','JM','M','Y','P','A','C','CS','L','PP','V','EG','EB','PG','JD','LH',
                 'CF','SR','TA','MA','FG','SA','UR','OI','RM','AP','SM','SF','PF',
                 'IF','IH','IC','IM','SC','LU','NR','BC','SI','LC','SH','PR','PX','PL','PK','CJ',
                 'BZ','B','LG','PS','PT','PD','EC','AD']
+    zhiji_offline = False
+    zhiji_fail = 0
     for s in all_syms:
-        bars = fetch_zhiji_daily(s)
+        bars = []
+        if not zhiji_offline:
+            bars = fetch_zhiji_daily(s)
+            if bars:
+                zhiji_fail = 0
+            else:
+                zhiji_fail += 1
+                if zhiji_fail >= 5:
+                    zhiji_offline = True
+                    print('⚠ zhiji不可达, 改用sina日线兜底', flush=True)
+        if not bars:
+            bars = sina_daily(s)
         if bars:
             cache[s] = {'bars': bars}
-        time.sleep(0.15)
+        time.sleep(0.05)
     return cache
 
 def sina_freq(sym, typ, limit=320):
