@@ -306,7 +306,7 @@ def render_summary():
                 cells.append(f'<td class="sum-{tone}">{CAT_LABEL[cat]}</td>')
             else:
                 cells.append('<td class="sum-none">—</td>')
-        h.append(f'<tr><td class="sum-sym">{sym}</td><td class="sum-name">{c["name"]}</td>' + ''.join(cells) + f'<td class="sum-res">{c["res"]}</td></tr>')
+        h.append(f'<tr onclick="openSum(\'{sym}\')" style="cursor:pointer"><td class="sum-sym">{sym}</td><td class="sum-name">{c["name"]}</td>' + ''.join(cells) + f'<td class="sum-res">{c["res"]}</td></tr>')
     h.append('</tbody></table></div></div>')
     return '\n'.join(h)
 
@@ -392,6 +392,10 @@ footer{{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26
 .sbox.dir span{{color:var(--emerald)}}.sbox.tp span{{color:var(--blue)}}.sbox.sl span{{color:var(--rose)}}
 .mdet{{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;color:var(--ink2);font:11px 'JetBrains Mono'}}
 .mdet i{{font-style:normal;background:var(--panel);border:1px solid var(--line);padding:3px 8px;border-radius:6px}}
+.m-levels{{display:flex;gap:8px;margin:10px 0 0}}
+.m-levels button{{padding:6px 16px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink2);font:600 12px 'Noto Sans SC';cursor:pointer}}
+.m-levels button.active{{background:var(--gold);color:#fff;border-color:var(--gold)}}
+.m-levels button:disabled{{opacity:.3;cursor:default}}
 @media(max-width:1000px){{.cards{{grid-template-columns:1fr 1fr}}}}
 @media(max-width:640px){{.cards{{grid-template-columns:1fr}}.strat-bar{{grid-template-columns:1fr}}}}
 </style></head><body><div class="shell">
@@ -411,6 +415,7 @@ footer{{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26
 <footer>数据源：日线=知几 · 15/60min=新浪实时 ｜ 每级别独立四框架评分 ｜ 每日 09:05/11:25/14:00/21:30 自动更新 ｜ 不构成投资建议</footer>
 <div id="modal" onclick="if(event.target===this)closeDetail()"><div class="mbox">
 <div class="mhead"><span class="sym" id="m-sym">—</span><span class="pname" id="m-name"></span><span class="pprice" id="m-price"></span><button class="close" onclick="closeDetail()">关闭 ✕</button></div>
+<div class="m-levels" id="m-levels"><button id="lv-15min" onclick="showLevel('15min')">15分钟</button><button id="lv-60min" onclick="showLevel('60min')">60分钟</button><button id="lv-日线" onclick="showLevel('日线')">日线</button></div>
 <div class="mdet" id="m-det"></div>
 <canvas class="mchart" id="m-chart" width="760" height="340"></canvas>
 <div class="strat-bar"><div class="sbox dir"><b>方向 / 进场</b><span id="m-entry">—</span></div><div class="sbox tp"><b>止盈</b><span id="m-tp">—</span></div><div class="sbox sl"><b>止损</b><span id="m-sl">—</span></div></div>
@@ -418,7 +423,11 @@ footer{{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26
 <script>
 const KDATA = {KJSON};
 function showTf(tf,btn){{document.querySelectorAll('.tf-tab').forEach(x=>x.classList.remove('active'));document.getElementById('tf-'+tf).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}}
-function openDetail(tf,sym){{const d=KDATA[tf][sym];if(!d)return;document.getElementById('m-sym').textContent=sym;document.getElementById('m-name').textContent=d.name;document.getElementById('m-price').textContent=d.price.toLocaleString();const dirColor=d.strat.dir.includes('多')?'#4A8060':(d.strat.dir.includes('空')?'#C05050':'#D4AF37');document.getElementById('m-entry').textContent=d.strat.dir+' ｜ '+d.strat.entry;document.getElementById('m-entry').style.color=dirColor;document.getElementById('m-tp').textContent=d.strat.tp;document.getElementById('m-sl').textContent=d.strat.sl;document.getElementById('m-det').innerHTML=['评分 '+d.score,'江恩 '+d.gann+'%','RSI '+d.rsi].map(x=>'<i>'+x+'</i>').join('');drawKline(d.bars);document.getElementById('modal').classList.add('show')}}
+let curSym=null,curTf='15min';
+function renderLevel(){{const d=KDATA[curTf]&&KDATA[curTf][curSym];if(!d)return;document.getElementById('m-sym').textContent=curSym;document.getElementById('m-name').textContent=d.name;document.getElementById('m-price').textContent=d.price.toLocaleString();const dirColor=d.strat.dir.includes('多')?'#4A8060':(d.strat.dir.includes('空')?'#C05050':'#D4AF37');document.getElementById('m-entry').textContent=d.strat.dir+' ｜ '+d.strat.entry;document.getElementById('m-entry').style.color=dirColor;document.getElementById('m-tp').textContent=d.strat.tp;document.getElementById('m-sl').textContent=d.strat.sl;document.getElementById('m-det').innerHTML=['评分 '+d.score,'江恩 '+d.gann+'%','RSI '+d.rsi].map(x=>'<i>'+x+'</i>').join('');drawKline(d.bars)}}
+function openDetail(tf,sym){{curSym=sym;curTf=tf;document.querySelectorAll('.m-levels button').forEach(b=>b.classList.toggle('active',b.id==='lv-'+tf));renderLevel();document.getElementById('modal').classList.add('show')}}
+function openSum(sym){{const tfs=['15min','60min','日线'];const tf=tfs.find(t=>KDATA[t]&&KDATA[t][sym])||tfs[0];curSym=sym;curTf=tf;tfs.forEach(t=>{{const btn=document.getElementById('lv-'+t);const has=!!(KDATA[t]&&KDATA[t][sym]);btn.disabled=!has;btn.classList.toggle('active',t===tf)}});renderLevel();document.getElementById('modal').classList.add('show')}}
+function showLevel(tf){{if(!curSym)return;curTf=tf;document.querySelectorAll('.m-levels button').forEach(b=>b.classList.toggle('active',b.id==='lv-'+tf));renderLevel()}}
 function closeDetail(){{document.getElementById('modal').classList.remove('show')}}
 function drawKline(bars){{
   const cv=document.getElementById('m-chart'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
