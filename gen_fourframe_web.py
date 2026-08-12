@@ -365,4 +365,4 @@ print(f'已生成: {OUT} ({len(body)/1024:.0f}KB, 含{sum(len(v) for v in kline_
 for tf, label in [('15min', '15分钟'), ('60min', '60分钟'), ('日线', '日线')]:
     print(f'===== {label}级别 =====')
     for title, key, items in groups_by_tf[tf]:
-        print(f'  {title}: {", ".join(f"{i["sym"]}({i["score"]:+.0f})" for i in items)}')
+        print('  ' + title + ': ' + ', '.join(it['sym'] + '(' + format(it['score'], '+.0f') + ')' for it in items))
