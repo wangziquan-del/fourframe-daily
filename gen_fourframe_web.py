@@ -199,13 +199,14 @@ def score_bars(bars):
 
 def strat_full(it, cat):
     p = it['price']; hi = it['hi']; lo = it['lo']
+    mid = (hi + lo) / 2
     if cat == 'best':
-        return {'dir': '多头', 'entry': f'回踩{max(lo, p*0.99):,.0f}', 'tp': f'{hi:,.0f}', 'sl': f'{lo*0.99:,.0f}'}
+        return {'dir': '多头', 'entry': f'回踩{max(lo, p*0.99):,.0f}', 'tp1': f'{mid:,.0f}', 'tp2': f'{hi:,.0f}', 'sl': f'{lo*0.99:,.0f}', 'trail': f'①{mid:,.0f}减半 ②{hi:,.0f}清仓 | 止损上移{max(lo, p*0.99):,.0f}'}
     if cat == 'worst':
-        return {'dir': '空头', 'entry': f'反弹{p*1.01:,.0f}', 'tp': f'{lo:,.0f}', 'sl': f'{hi*1.01:,.0f}'}
+        return {'dir': '空头', 'entry': f'反弹{p*1.01:,.0f}', 'tp1': f'{mid:,.0f}', 'tp2': f'{lo:,.0f}', 'sl': f'{hi*1.01:,.0f}', 'trail': f'①{mid:,.0f}减半 ②{lo:,.0f}清仓 | 止损下移{p*0.99:,.0f}'}
     if cat == 'neutral':
-        return {'dir': '双向', 'entry': f'突破{hi:,.0f}多 / 跌破{lo:,.0f}空', 'tp': f'{hi*1.02:,.0f} / {lo*0.98:,.0f}', 'sl': f'{lo:,.0f} / {hi:,.0f}'}
-    return {'dir': '多头', 'entry': f'回踩{lo:,.0f}', 'tp': f'{hi:,.0f}', 'sl': f'{lo*0.99:,.0f}'}
+        return {'dir': '双向', 'entry': f'突破{hi:,.0f}多/跌破{lo:,.0f}空', 'tp1': f'{hi:,.0f}/{lo:,.0f}', 'tp2': f'{hi*1.02:,.0f}/{lo*0.98:,.0f}', 'sl': f'{lo:,.0f}/{hi:,.0f}', 'trail': '突破/跌破后顺势,止损移至区间边'}
+    return {'dir': '多头', 'entry': f'回踩{lo:,.0f}', 'tp1': f'{mid:,.0f}', 'tp2': f'{hi:,.0f}', 'sl': f'{lo*0.99:,.0f}', 'trail': f'①{mid:,.0f}减半 ②{hi:,.0f}清仓 | 止损上移{lo:,.0f}'}
 
 # ===== 主流程 =====
 cache = load_cache()
@@ -306,7 +307,10 @@ def render_summary():
                 cells.append(f'<td class="sum-{tone}">{CAT_LABEL[cat]}</td>')
             else:
                 cells.append('<td class="sum-none">—</td>')
-        h.append(f'<tr onclick="openSum(\'{sym}\')" style="cursor:pointer"><td class="sum-sym">{sym}</td><td class="sum-name">{c["name"]}</td>' + ''.join(cells) + f'<td class="sum-res">{c["res"]}</td></tr>')
+        row_cls = 'row-bull' if c['bull'] >= 2 else ('row-bear' if c['bear'] >= 2 else '')
+        if c['bull'] == 3: row_cls = 'row-strong-bull'
+        if c['bear'] == 3: row_cls = 'row-strong-bear'
+        h.append(f'<tr class="{row_cls}" onclick="openSum(\'{sym}\')" style="cursor:pointer"><td class="sum-sym">{sym}</td><td class="sum-name">{c["name"]}</td>' + ''.join(cells) + f'<td class="sum-res">{c["res"]}</td></tr>')
     h.append('</tbody></table></div></div>')
     return '\n'.join(h)
 
@@ -365,6 +369,12 @@ body = f'''<!DOCTYPE html>
 .sum-val{{color:var(--blue);font-weight:700}}
 .sum-none{{color:var(--ink3);opacity:.4}}
 .sum-res{{font:11px 'Noto Sans SC';white-space:nowrap}}
+.sum-tb tr.row-bull td{{background:#f0f8f2}}.sum-tb tr.row-bear td{{background:#fbf1f0}}
+.sum-tb tr.row-strong-bull td{{background:#d9efdf}}.sum-tb tr.row-strong-bear td{{background:#f7ddda}}
+.sum-tb tr.row-bull:hover td,.sum-tb tr.row-bear:hover td,.sum-tb tr.row-strong-bull:hover td,.sum-tb tr.row-strong-bear:hover td{{filter:brightness(.97)}}
+.toolbar{{display:flex;gap:10px;justify-content:center;margin:14px 0}}
+.toolbar button{{padding:8px 18px;border:1px solid var(--gold);border-radius:999px;background:var(--panel);color:var(--ink2);font:600 12px 'Noto Sans SC';cursor:pointer}}
+.toolbar button:hover{{background:var(--gold);color:#fff}}
 .tabs{{display:flex;gap:8px;justify-content:center;margin:16px 0}}.tabs button{{padding:9px 22px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink2);font:600 13px 'Noto Sans SC';cursor:pointer}}
 .tabs button.active{{background:var(--gold);color:#fff;border-color:var(--gold)}}
 .tf-tab{{display:none}}.tf-tab.active{{display:block}}
@@ -385,7 +395,8 @@ footer{{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26
 .mbox{{background:var(--bg);border:1px solid var(--gold);border-radius:18px;max-width:820px;width:92%;max-height:90vh;overflow:auto;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.3)}}
 .mhead{{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}}.mhead .sym{{font-size:26px}}.mhead .close{{margin-left:auto;background:none;border:1px solid var(--line);border-radius:8px;padding:4px 12px;cursor:pointer;color:var(--ink2);font-size:13px}}
 .mchart{{width:100%;height:340px;background:#fff;border:1px solid var(--line);border-radius:12px;margin:12px 0}}
-.strat-bar{{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}}
+.strat-bar{{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}}
+.m-trail{{margin-top:10px;padding:9px 12px;border:1px dashed var(--line);border-radius:8px;background:var(--panel);color:var(--ink2);font:11px 'JetBrains Mono'}}
 .sbox{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}}
 .sbox b{{display:block;color:var(--gold);font:10px 'JetBrains Mono';letter-spacing:.1em;margin-bottom:4px}}
 .sbox span{{font:700 15px 'JetBrains Mono'}}
@@ -408,6 +419,7 @@ footer{{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26
 <div class="hero-meta"><span>日线数据 <b>{last_daily}</b></span><span>生成 <b>{now}</b></span><span>品种 <b>{len(universe)}</b></span><span>{sina_note}</span></div>
 </div></header>
 <nav class="tabs"><button class="active" onclick="showTf('15min',this)">15分钟</button><button onclick="showTf('60min',this)">60分钟</button><button onclick="showTf('日线',this)">日线</button><button onclick="showTf('sum',this)">🌐 汇总</button></nav>
+<div class="toolbar"><button onclick="exportCSV()">📥 导出CSV</button><button onclick="copyShare()">📋 复制分享</button></div>
 {render_tab('15min', groups_by_tf['15min'])}
 {render_tab('60min', groups_by_tf['60min'])}
 {render_tab('日线', groups_by_tf['日线'])}
@@ -418,13 +430,14 @@ footer{{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26
 <div class="m-levels" id="m-levels"><button id="lv-15min" onclick="showLevel('15min')">15分钟</button><button id="lv-60min" onclick="showLevel('60min')">60分钟</button><button id="lv-日线" onclick="showLevel('日线')">日线</button></div>
 <div class="mdet" id="m-det"></div>
 <canvas class="mchart" id="m-chart" width="760" height="340"></canvas>
-<div class="strat-bar"><div class="sbox dir"><b>方向 / 进场</b><span id="m-entry">—</span></div><div class="sbox tp"><b>止盈</b><span id="m-tp">—</span></div><div class="sbox sl"><b>止损</b><span id="m-sl">—</span></div></div>
+<div class="strat-bar"><div class="sbox dir"><b>方向 / 进场</b><span id="m-entry">—</span></div><div class="sbox tp"><b>止盈①</b><span id="m-tp1">—</span></div><div class="sbox tp"><b>止盈②</b><span id="m-tp2">—</span></div><div class="sbox sl"><b>止损</b><span id="m-sl">—</span></div></div>
+<div class="m-trail" id="m-trail">移动止盈：—</div>
 </div></div>
 <script>
 const KDATA = {KJSON};
 function showTf(tf,btn){{document.querySelectorAll('.tf-tab').forEach(x=>x.classList.remove('active'));document.getElementById('tf-'+tf).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}}
 let curSym=null,curTf='15min';
-function renderLevel(){{const d=KDATA[curTf]&&KDATA[curTf][curSym];if(!d)return;document.getElementById('m-sym').textContent=curSym;document.getElementById('m-name').textContent=d.name;document.getElementById('m-price').textContent=d.price.toLocaleString();const dirColor=d.strat.dir.includes('多')?'#4A8060':(d.strat.dir.includes('空')?'#C05050':'#D4AF37');document.getElementById('m-entry').textContent=d.strat.dir+' ｜ '+d.strat.entry;document.getElementById('m-entry').style.color=dirColor;document.getElementById('m-tp').textContent=d.strat.tp;document.getElementById('m-sl').textContent=d.strat.sl;document.getElementById('m-det').innerHTML=['评分 '+d.score,'江恩 '+d.gann+'%','RSI '+d.rsi].map(x=>'<i>'+x+'</i>').join('');drawKline(d.bars)}}
+function renderLevel(){{const d=KDATA[curTf]&&KDATA[curTf][curSym];if(!d)return;document.getElementById('m-sym').textContent=curSym;document.getElementById('m-name').textContent=d.name;document.getElementById('m-price').textContent=d.price.toLocaleString();const dirColor=d.strat.dir.includes('多')?'#4A8060':(d.strat.dir.includes('空')?'#C05050':'#D4AF37');document.getElementById('m-entry').textContent=d.strat.dir+' ｜ '+d.strat.entry;document.getElementById('m-entry').style.color=dirColor;document.getElementById('m-tp1').textContent=d.strat.tp1;document.getElementById('m-tp2').textContent=d.strat.tp2;document.getElementById('m-sl').textContent=d.strat.sl;document.getElementById('m-trail').textContent='移动止盈：'+d.strat.trail;document.getElementById('m-det').innerHTML=['评分 '+d.score,'江恩 '+d.gann+'%','RSI '+d.rsi].map(x=>'<i>'+x+'</i>').join('');drawKline(d.bars)}}
 function openDetail(tf,sym){{curSym=sym;curTf=tf;document.querySelectorAll('.m-levels button').forEach(b=>b.classList.toggle('active',b.id==='lv-'+tf));renderLevel();document.getElementById('modal').classList.add('show')}}
 function openSum(sym){{const tfs=['15min','60min','日线'];const tf=tfs.find(t=>KDATA[t]&&KDATA[t][sym])||tfs[0];curSym=sym;curTf=tf;tfs.forEach(t=>{{const btn=document.getElementById('lv-'+t);const has=!!(KDATA[t]&&KDATA[t][sym]);btn.disabled=!has;btn.classList.toggle('active',t===tf)}});renderLevel();document.getElementById('modal').classList.add('show')}}
 function showLevel(tf){{if(!curSym)return;curTf=tf;document.querySelectorAll('.m-levels button').forEach(b=>b.classList.toggle('active',b.id==='lv-'+tf));renderLevel()}}
@@ -456,6 +469,8 @@ function drawKline(bars){{
   for(let i=0;i<n;i++){{const b=bars[i],up=b.c>=b.o;const vh=b.v/vmax*vpH;ctx.fillStyle=up?'rgba(192,80,80,.35)':'rgba(74,128,96,.35)';ctx.fillRect(xP(i)-cw/2,H-vh,cw,vh)}}
   ctx.fillStyle='#9c938e';ctx.font='10px JetBrains Mono';ctx.fillText('H '+hi.toLocaleString(),px+6,16);ctx.fillText('L '+lo.toLocaleString(),px+6,H-4);
 }}
+function exportCSV(){{let csv='品种,名称,级别,分类,评分,现价,方向,进场,止盈1,止盈2,止损\n';['15min','60min','日线'].forEach(tf=>{{Object.keys(KDATA[tf]).forEach(sym=>{{const d=KDATA[tf][sym],s=d.strat;csv+=[sym,d.name,tf,d.cat,d.score,d.price,s.dir,s.entry,s.tp1,s.tp2,s.sl].join(',')+'\n'}})}});const blob=new Blob(['﻿'+csv],{{type:'text/csv;charset=utf-8'}});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='四框架选品_'+new Date().toISOString().slice(0,10)+'.csv';a.click()}}
+function copyShare(){{const d=new Date().toLocaleString('zh-CN');let txt='四框架每日选品 '+d+'\n================\n';['15min','60min','日线'].forEach(tf=>{{txt+='\n【'+tf+'】\n';Object.keys(KDATA[tf]).forEach(sym=>{{const x=KDATA[tf][sym];txt+=sym+' '+x.name+' '+x.strat.dir+' 进场'+x.strat.entry+' 止盈'+x.strat.tp1+'/'+x.strat.tp2+' 止损'+x.strat.sl+'\n'}})}});navigator.clipboard.writeText(txt).then(()=>alert('已复制分享文本'))}}
 document.addEventListener('keydown',e=>{{if(e.key==='Escape')closeDetail()}});
 </script>
 </div></body></html>'''
