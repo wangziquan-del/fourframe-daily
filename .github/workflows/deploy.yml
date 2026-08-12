@@ -1,0 +1,49 @@
+name: Deploy Four-Frame Daily
+
+on:
+  schedule:
+    - cron: "5 1 * * *"    # 09:05 北京时间 (UTC+8)
+    - cron: "25 3 * * *"   # 11:25 北京时间
+    - cron: "0 6 * * *"    # 14:00 北京时间
+    - cron: "30 13 * * *"  # 21:30 北京时间
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Generate four-frame daily page
+        env:
+          OUT_HTML: ${{ github.workspace }}/index.html
+        run: python gen_fourframe_web.py
+      - name: Prepare static site
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./_site
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
