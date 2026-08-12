@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-"""四框架每日选品 · 三级别生成器 (15min/60min/日线)
+"""四框架每日选品 · 三级别生成器 (15min/60min/日线) · 含点击详情(实时K线+策略)
 对每个品种在三个时间框架分别做四框架评分(缠论+MACD/RSI+江恩+量价),
-每个时间框架各自分类: 好3/坏3/中性待突破3/性价比3, 生成带标签页的HTML。
-日线: zhiji缓存(fetch_zhiji_all.py刷新); 15/60min: 新浪实时。
+每个时间框架各自分类: 好3/坏3/中性待突破3/性价比3。
+点击品种卡 → 详情弹窗: 该级别K线图(蜡烛+MA5/10/20+成交量) + 进场/止盈/止损。
+日线: 知几(缓存或直连); 15/60min: 新浪实时。
 用法: python gen_fourframe_web.py
-输出: 四框架选品_daily/index.html (与旧版同路径, 覆盖为三级别版)
+输出: $OUT_HTML (默认 D:/claude/四框架选品_daily/index.html)
 """
 import sys, json, re, urllib.request, datetime, os, subprocess, time
 sys.stdout.reconfigure(encoding='utf-8')
@@ -15,19 +16,29 @@ STALE = {'ZC', 'WR'}
 ZHIJI_API_KEY = 'wk_cbf2f9ff16f924c8c1f156bfd80fcc9b'
 ZHIJI_BASE = 'https://zhiji-ai.xyz/guan/api/kline'
 
+NAMES = {
+    'CU':'沪铜','AL':'沪铝','ZN':'沪锌','PB':'沪铅','NI':'沪镍','SN':'沪锡','AU':'沪金','AG':'沪银',
+    'RB':'螺纹','HC':'热卷','SS':'不锈钢','RU':'橡胶','BU':'沥青','FU':'燃油','SP':'纸浆','AO':'氧化铝',
+    'BR':'丁二烯橡胶','I':'铁矿','J':'焦炭','JM':'焦煤','M':'豆粕','Y':'豆油','P':'棕榈','A':'豆一',
+    'C':'玉米','CS':'淀粉','L':'塑料','PP':'聚丙烯','V':'PVC','EG':'乙二醇','EB':'苯乙烯','PG':'液化气',
+    'JD':'鸡蛋','LH':'生猪','CF':'棉花','SR':'白糖','TA':'PTA','MA':'甲醇','FG':'玻璃','SA':'纯碱',
+    'UR':'尿素','OI':'菜油','RM':'菜粕','AP':'苹果','SM':'锰硅','SF':'硅铁','PF':'短纤','ZC':'动力煤',
+    'IF':'沪深300','IH':'上证50','IC':'中证500','IM':'中证1000','T':'10年国债','TF':'5年国债',
+    'SC':'原油','LU':'低硫燃油','NR':'20号胶','BC':'国际铜','SI':'工业硅','LC':'碳酸锂','SH':'烧碱',
+    'PR':'瓶片','PX':'对二甲苯','PL':'丙烯','PK':'花生','CJ':'红枣','BZ':'纯苯','B':'豆二','LG':'原木',
+    'PS':'多晶硅','PT':'铂','PD':'钯','EC':'集运欧线','AD':'铸造铝合金','WR':'线材',
+}
+
 def fetch_zhiji_daily(sym):
-    """直连知几guan API拉日线(CI无缓存时用)"""
     url = f'{ZHIJI_BASE}?symbol={sym}&freq=D&cont=1&limit=120'
     try:
         cmd = ['curl', '-s', '--max-time', '20', '-H', f'X-Guan-Key: {ZHIJI_API_KEY}', url]
         r = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', timeout=25)
-        data = json.loads(r.stdout)
-        return data.get('bars', [])
+        return json.loads(r.stdout).get('bars', [])
     except Exception:
         return []
 
 def load_cache():
-    """载入缓存; 文件不存在则直连知几拉全品种"""
     if os.path.exists(CACHE):
         try:
             return json.load(open(CACHE, encoding='utf-8'))
@@ -47,35 +58,19 @@ def load_cache():
         time.sleep(0.15)
     return cache
 
-NAMES = {
-    'CU':'沪铜','AL':'沪铝','ZN':'沪锌','PB':'沪铅','NI':'沪镍','SN':'沪锡','AU':'沪金','AG':'沪银',
-    'RB':'螺纹','HC':'热卷','SS':'不锈钢','RU':'橡胶','BU':'沥青','FU':'燃油','SP':'纸浆','AO':'氧化铝',
-    'BR':'丁二烯橡胶','I':'铁矿','J':'焦炭','JM':'焦煤','M':'豆粕','Y':'豆油','P':'棕榈','A':'豆一',
-    'C':'玉米','CS':'淀粉','L':'塑料','PP':'聚丙烯','V':'PVC','EG':'乙二醇','EB':'苯乙烯','PG':'液化气',
-    'JD':'鸡蛋','LH':'生猪','CF':'棉花','SR':'白糖','TA':'PTA','MA':'甲醇','FG':'玻璃','SA':'纯碱',
-    'UR':'尿素','OI':'菜油','RM':'菜粕','AP':'苹果','SM':'锰硅','SF':'硅铁','PF':'短纤','ZC':'动力煤',
-    'IF':'沪深300','IH':'上证50','IC':'中证500','IM':'中证1000','T':'10年国债','TF':'5年国债',
-    'SC':'原油','LU':'低硫燃油','NR':'20号胶','BC':'国际铜','SI':'工业硅','LC':'碳酸锂','SH':'烧碱',
-    'PR':'瓶片','PX':'对二甲苯','PL':'丙烯','PK':'花生','CJ':'红枣','BZ':'纯苯','B':'豆二','LG':'原木',
-    'PS':'多晶硅','PT':'铂','PD':'钯','EC':'集运欧线','AD':'铸造铝合金','WR':'线材',
-}
-
-# ===== 数据获取 =====
 def sina_freq(sym, typ, limit=320):
     s = sym + '0'
     url = f'https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20X=/InnerFuturesNewService.getFewMinLine?symbol={s}&type={typ}'
     try:
         req = urllib.request.Request(url, headers={'Referer': 'https://finance.sina.com.cn', 'User-Agent': 'Mozilla/5.0'})
-        t = urllib.request.urlopen(req, timeout=8).read().decode('utf-8')
+        t = urllib.request.urlopen(req, timeout=5).read().decode('utf-8')
         m = re.search(r'\((\[.*\])\)', t, re.S)
         if not m: return []
-        data = json.loads(m.group(1))
         return [{'time': x['d'], 'open': float(x['o']), 'high': float(x['h']),
-                 'low': float(x['l']), 'close': float(x['c']), 'volume': float(x.get('v', 0))} for x in data]
+                 'low': float(x['l']), 'close': float(x['c']), 'volume': float(x.get('v', 0))} for x in json.loads(m.group(1))]
     except Exception:
         return []
 
-# ===== 指标 =====
 def ema(vals, n):
     out = [vals[0]]; k = 2 / (n + 1)
     for v in vals[1:]: out.append(v * k + out[-1] * (1 - k))
@@ -107,7 +102,6 @@ def ma_state(closes):
     return '震荡'
 
 def position_pct(bars):
-    """区间位置(江恩位): 取近60根的高低区间"""
     highs = [b['high'] for b in bars[-60:]]; lows = [b['low'] for b in bars[-60:]]
     p = bars[-1]['close']
     hi = max(highs); lo = min(lows)
@@ -143,8 +137,7 @@ def chan_status(piv, p):
         if p > zg: return f'中枢[{zd:,.0f}~{zg:,.0f}]上 → B3'
         if p < zd: return f'中枢[{zd:,.0f}~{zg:,.0f}]下 → S3'
         return f'中枢[{zd:,.0f}~{zg:,.0f}]内'
-    last_p = last[-1]
-    return f'{"单边下" if last_p[0] == "顶" else "单边上"}'
+    return '单边' + ('下' if last[-1][0] == '顶' else '上')
 
 def vol_state(bars):
     vols = [b.get('volume', 0) for b in bars]
@@ -154,7 +147,6 @@ def vol_state(bars):
     return f'量比{vr:.2f}·{"放量" if vr > 1.3 else ("缩量" if vr < 0.7 else "平量")}'
 
 def score_bars(bars):
-    """单个时间框架的四框架评分 + 详情"""
     if len(bars) < 60: return None
     closes = [b['close'] for b in bars]
     p = closes[-1]
@@ -177,30 +169,51 @@ def score_bars(bars):
     return {'score': s, 'price': p, 'macd': m['cross'], 'ma': ms, 'gann': round(pos), 'rsi': round(r),
             'chan': cs, 'vol': vs, 'hi': hi, 'lo': lo}
 
+def strat_full(it, cat):
+    p = it['price']; hi = it['hi']; lo = it['lo']
+    if cat == 'best':
+        return {'dir': '多头', 'entry': f'回踩{max(lo, p*0.99):,.0f}', 'tp': f'{hi:,.0f}', 'sl': f'{lo*0.99:,.0f}'}
+    if cat == 'worst':
+        return {'dir': '空头', 'entry': f'反弹{p*1.01:,.0f}', 'tp': f'{lo:,.0f}', 'sl': f'{hi*1.01:,.0f}'}
+    if cat == 'neutral':
+        return {'dir': '双向', 'entry': f'突破{hi:,.0f}多 / 跌破{lo:,.0f}空', 'tp': f'{hi*1.02:,.0f} / {lo*0.98:,.0f}', 'sl': f'{lo:,.0f} / {hi:,.0f}'}
+    return {'dir': '多头', 'entry': f'回踩{lo:,.0f}', 'tp': f'{hi:,.0f}', 'sl': f'{lo*0.99:,.0f}'}
+
 # ===== 主流程 =====
 cache = load_cache()
 universe = [sym for sym, d in cache.items()
             if sym not in STALE and isinstance(d, dict) and d.get('bars') and len(d['bars']) >= 60]
 
-results = {}  # timeframe -> {sym: detail}
-for tf, label in [('15min', '15分钟'), ('60min', '60分钟'), ('日线', '日线')]:
-    results[tf] = {}
+results = {'15min': {}, '60min': {}, '日线': {}}
+all_bars = {'15min': {}, '60min': {}, '日线': {}}
 
+sina_fail_streak = 0
+sina_offline = os.environ.get('SKIP_SINA') == '1'
+if sina_offline:
+    print('SKIP_SINA=1, 跳过15/60min, 仅日线', flush=True)
 for sym in universe:
     name = NAMES.get(sym, sym)
-    # 日线
     bars = cache[sym]['bars'][-120:]
+    all_bars['日线'][sym] = bars
     d = score_bars(bars)
     if d: results['日线'][sym] = dict(d, sym=sym, name=name)
-    # 60min / 15min (新浪)
+    if sina_offline:
+        continue
     for tf, typ in [('60min', '60'), ('15min', '15')]:
         ib = sina_freq(sym, typ)
-        if len(ib) >= 60:
-            d = score_bars(ib)
-            if d: results[tf][sym] = dict(d, sym=sym, name=name)
+        if len(ib) < 60:
+            sina_fail_streak += 1
+            if sina_fail_streak >= 8:
+                sina_offline = True
+                print('⚠ sina不可达(连续失败), 15/60min级别跳过, 仅出日线', flush=True)
+                break
+            continue
+        sina_fail_streak = 0
+        all_bars[tf][sym] = ib
+        d = score_bars(ib)
+        if d: results[tf][sym] = dict(d, sym=sym, name=name)
 
 def classify(tf_results):
-    """分类: 好/坏/中性待突破/性价比, 各取3"""
     items = list(tf_results.values())
     items.sort(key=lambda x: -x['score'])
     best = items[:3]
@@ -216,35 +229,42 @@ def classify(tf_results):
     return [('好 · 技术图形最强', 'best', best), ('坏 · 空头最扎实', 'worst', worst),
             ('中性待突破 · 区间蓄势', 'neutral', neutral), ('性价比 · 低位金叉', 'value', value)]
 
-def strat_for(item, cat):
-    p = item['price']; hi = item['hi']; lo = item['lo']
-    if cat == 'best':
-        return ('多头', f'回踩{max(lo, p*0.99):,.0f}企稳', f'{lo:,.0f}', f'上看{hi:,.0f}')
-    if cat == 'worst':
-        return ('空头', f'反弹{p*1.01:,.0f}滞涨', f'{hi:,.0f}', f'下看{lo:,.0f}')
-    if cat == 'neutral':
-        return ('双向', f'突破{hi:,.0f}多/跌破{lo:,.0f}空', f'{lo:,.0f}', f'上看{hi:,.0f}')
-    return ('多头', f'回踩{lo:,.0f}企稳', f'{lo*0.995:,.0f}', f'上看{hi:,.0f}')
+groups_by_tf = {tf: classify(results[tf]) for tf in ['15min', '60min', '日线']}
 
-def render_tab(tf, label, groups):
+kline_data = {}
+for tf in ['15min', '60min', '日线']:
+    kline_data[tf] = {}
+    for title, key, items in groups_by_tf[tf]:
+        for it in items:
+            bars = all_bars.get(tf, {}).get(it['sym'], [])
+            kline_data[tf][it['sym']] = {
+                'name': it['name'], 'cat': key, 'score': it['score'],
+                'price': it['price'], 'gann': it['gann'], 'rsi': it['rsi'],
+                'bars': [{'t': b['time'], 'o': b['open'], 'h': b['high'], 'l': b['low'], 'c': b['close'], 'v': b.get('volume', 0)} for b in bars[-90:]],
+                'strat': strat_full(it, key),
+            }
+
+now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+last_daily = max((cache[s]['bars'][-1]['time'] for s in universe if cache[s]['bars']), default='?')
+sina_note = '⚠ 15/60min不可达·仅日线' if sina_offline else '15/60min已更新'
+
+def render_card(it, tf):
+    return f'''<article class="pcard" onclick="openDetail('{tf}','{it['sym']}')">
+<div class="phead"><span class="sym">{it['sym']}</span><span class="pname">{it['name']}</span><span class="pprice">{it['price']:,.0f}</span><span class="pscore">{it['score']:+.0f}</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>{it['chan']}</td></tr><tr><td class="k">MACD/RSI</td><td>{it['macd']} RSI{it['rsi']} · {it['ma']}</td></tr><tr><td class="k">江恩</td><td>位{it['gann']}% · {it['lo']:,.0f}~{it['hi']:,.0f}</td></tr><tr><td class="k">量价</td><td>{it['vol']}</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>'''
+
+def render_tab(tf, groups):
     h = [f'<div class="tf-tab" id="tf-{tf}">']
     for title, key, items in groups:
         h.append(f'<h3 class="cat-title">{"🟢" if key=="best" else "🔴" if key=="worst" else "⚪" if key=="neutral" else "🎯"} {title}</h3><div class="cards">')
         for it in items:
-            dir_, entry, stop, target = strat_for(it, key)
-            cls = 'pos' if '多' in dir_ else ('neg' if '空' in dir_ else 'neu')
-            h.append(f'''<article class="pcard"><div class="phead"><span class="sym">{it['sym']}</span><span class="pname">{it['name']}</span><span class="pprice">{it['price']:,.0f}</span><span class="pscore">{it['score']:+.0f}</span></div>
-<table class="ft"><tr><td class="k">缠论</td><td>{it['chan']}</td></tr><tr><td class="k">MACD/RSI</td><td>{it['macd']} RSI{it['rsi']} · {it['ma']}</td></tr><tr><td class="k">江恩</td><td>位{it['gann']}% · {it['lo']:,.0f}~{it['hi']:,.0f}</td></tr><tr><td class="k">量价</td><td>{it['vol']}</td></tr></table>
-<div class="strat"><span class="dir {cls}">{dir_}</span> 入场 {entry} ｜ 止损 {stop} ｜ 目标 {target}</div></article>''')
+            h.append(render_card(it, tf))
         h.append('</div>')
     h.append('</div>')
     return '\n'.join(h)
 
-groups_by_tf = {tf: classify(results[tf]) for tf in ['15min', '60min', '日线']}
-
-now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
-# 数据日期: 日线取缓存最新
-last_daily = max((cache[s]['bars'][-1]['time'] for s in universe if cache[s]['bars']), default='?')
+KJSON = json.dumps(kline_data, ensure_ascii=False, separators=(',', ':'))
 
 body = f'''<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -262,35 +282,87 @@ body = f'''<!DOCTYPE html>
 .tf-tab{{display:none}}.tf-tab.active{{display:block}}
 .cat-title{{font-family:Cinzel,serif;font-weight:600;font-size:19px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin:22px 0 12px}}
 .cards{{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}}
-.pcard{{background:var(--panel);border:1px solid var(--line);border-top-left-radius:40px;border-top-right-radius:40px;padding:16px 16px 12px;position:relative;overflow:hidden}}
+.pcard{{background:var(--panel);border:1px solid var(--line);border-top-left-radius:40px;border-top-right-radius:40px;padding:16px 16px 10px;position:relative;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}}
+.pcard:hover{{transform:translateY(-2px);box-shadow:0 8px 22px rgba(44,36,32,.10)}}
 .pcard::before{{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),#f0dfa8)}}
 .phead{{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}}.sym{{font:700 20px 'JetBrains Mono';color:var(--ink)}}
 .pname{{color:var(--ink2);font-size:12px}}.pprice{{margin-left:auto;font:600 16px 'JetBrains Mono';color:var(--blue)}}
 .pscore{{font:700 12px 'JetBrains Mono';color:var(--gold)}}
 .ft{{width:100%;border-collapse:collapse;font-size:12px}}.ft td{{padding:5px 2px;border-bottom:1px solid var(--line);vertical-align:top}}
 .ft td.k{{white-space:nowrap;color:var(--gold);font:600 11px;width:56px}}
-.strat{{margin-top:9px;font:11px/1.6 'JetBrains Mono';color:var(--ink2)}}.pos{{color:var(--emerald)}}.neg{{color:var(--rose)}}.neu{{color:var(--gold)}}
+.hint{{margin-top:8px;text-align:right;color:var(--blue);font:10px 'JetBrains Mono';opacity:.75}}
 footer{{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26px 0;padding-top:12px;border-top:1px solid var(--line)}}
-@media(max-width:1000px){{.cards{{grid-template-columns:1fr 1fr}}}}@media(max-width:640px){{.cards{{grid-template-columns:1fr}}}}
+#modal{{display:none;position:fixed;inset:0;background:rgba(20,15,10,.55);z-index:50;align-items:center;justify-content:center}}
+#modal.show{{display:flex}}
+.mbox{{background:var(--bg);border:1px solid var(--gold);border-radius:18px;max-width:820px;width:92%;max-height:90vh;overflow:auto;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.3)}}
+.mhead{{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}}.mhead .sym{{font-size:26px}}.mhead .close{{margin-left:auto;background:none;border:1px solid var(--line);border-radius:8px;padding:4px 12px;cursor:pointer;color:var(--ink2);font-size:13px}}
+.mchart{{width:100%;height:340px;background:#fff;border:1px solid var(--line);border-radius:12px;margin:12px 0}}
+.strat-bar{{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}}
+.sbox{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}}
+.sbox b{{display:block;color:var(--gold);font:10px 'JetBrains Mono';letter-spacing:.1em;margin-bottom:4px}}
+.sbox span{{font:700 15px 'JetBrains Mono'}}
+.sbox.dir span{{color:var(--emerald)}}.sbox.tp span{{color:var(--blue)}}.sbox.sl span{{color:var(--rose)}}
+.mdet{{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;color:var(--ink2);font:11px 'JetBrains Mono'}}
+.mdet i{{font-style:normal;background:var(--panel);border:1px solid var(--line);padding:3px 8px;border-radius:6px}}
+@media(max-width:1000px){{.cards{{grid-template-columns:1fr 1fr}}}}
+@media(max-width:640px){{.cards{{grid-template-columns:1fr}}.strat-bar{{grid-template-columns:1fr}}}}
 </style></head><body><div class="shell">
 <header><div class="eyebrow">FOUR-FRAME DAILY SELECTION</div>
 <h1>四框架每日选品 · 三级别</h1>
-<div class="sub">缠论 · MACD/RSI · 江恩 · 量价 ｜ 15分钟 / 60分钟 / 日线 ｜ 每级别 好3·坏3·中性待突破3·性价比3</div>
-<div class="meta"><span>日线数据 <b>{last_daily}</b></span><span>生成 <b>{now}</b></span><span>品种 <b>{len(universe)}</b></span></div></header>
+<div class="sub">缠论 · MACD/RSI · 江恩 · 量价 ｜ 15分钟 / 60分钟 / 日线 ｜ 点击品种看K线+策略</div>
+<div class="meta"><span>日线数据 <b>{last_daily}</b></span><span>生成 <b>{now}</b></span><span>品种 <b>{len(universe)}</b></span><span>{sina_note}</span></div></header>
 <nav class="tabs"><button class="active" onclick="showTf('15min',this)">15分钟</button><button onclick="showTf('60min',this)">60分钟</button><button onclick="showTf('日线',this)">日线</button></nav>
-{render_tab('15min','15分钟',groups_by_tf['15min'])}
-{render_tab('60min','60分钟',groups_by_tf['60min'])}
-{render_tab('日线','日线',groups_by_tf['日线'])}
-<footer>数据源：日线=知几(需刷新缓存) · 15/60min=新浪实时 ｜ 每级别独立四框架评分 ｜ 不构成投资建议</footer>
-<script>function showTf(tf,btn){{document.querySelectorAll('.tf-tab').forEach(x=>x.classList.remove('active'));document.getElementById('tf-'+tf).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}}</script>
+{render_tab('15min', groups_by_tf['15min'])}
+{render_tab('60min', groups_by_tf['60min'])}
+{render_tab('日线', groups_by_tf['日线'])}
+<footer>数据源：日线=知几 · 15/60min=新浪实时 ｜ 每级别独立四框架评分 ｜ 每日 09:05/11:25/14:00/21:30 自动更新 ｜ 不构成投资建议</footer>
+<div id="modal" onclick="if(event.target===this)closeDetail()"><div class="mbox">
+<div class="mhead"><span class="sym" id="m-sym">—</span><span class="pname" id="m-name"></span><span class="pprice" id="m-price"></span><button class="close" onclick="closeDetail()">关闭 ✕</button></div>
+<div class="mdet" id="m-det"></div>
+<canvas class="mchart" id="m-chart" width="760" height="340"></canvas>
+<div class="strat-bar"><div class="sbox dir"><b>方向 / 进场</b><span id="m-entry">—</span></div><div class="sbox tp"><b>止盈</b><span id="m-tp">—</span></div><div class="sbox sl"><b>止损</b><span id="m-sl">—</span></div></div>
+</div></div>
+<script>
+const KDATA = {KJSON};
+function showTf(tf,btn){{document.querySelectorAll('.tf-tab').forEach(x=>x.classList.remove('active'));document.getElementById('tf-'+tf).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}}
+function openDetail(tf,sym){{const d=KDATA[tf][sym];if(!d)return;document.getElementById('m-sym').textContent=sym;document.getElementById('m-name').textContent=d.name;document.getElementById('m-price').textContent=d.price.toLocaleString();const dirColor=d.strat.dir.includes('多')?'#4A8060':(d.strat.dir.includes('空')?'#C05050':'#D4AF37');document.getElementById('m-entry').textContent=d.strat.dir+' ｜ '+d.strat.entry;document.getElementById('m-entry').style.color=dirColor;document.getElementById('m-tp').textContent=d.strat.tp;document.getElementById('m-sl').textContent=d.strat.sl;document.getElementById('m-det').innerHTML=['评分 '+d.score,'江恩 '+d.gann+'%','RSI '+d.rsi].map(x=>'<i>'+x+'</i>').join('');drawKline(d.bars);document.getElementById('modal').classList.add('show')}}
+function closeDetail(){{document.getElementById('modal').classList.remove('show')}}
+function drawKline(bars){{
+  const cv=document.getElementById('m-chart'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);if(!bars||!bars.length)return;
+  const n=bars.length,px=6,plotH=H*0.72,vpH=H*0.20,gap=14;
+  let hi=Math.max(...bars.map(b=>b.h)),lo=Math.min(...bars.map(b=>b.l));
+  const pad=(hi-lo)*0.06,priceH=plotH-gap;
+  const yP=p=>gap+(hi+pad-p)/(hi-lo+2*pad)*priceH;
+  const xP=i=>px+i*(W-2*px)/n;
+  ctx.strokeStyle='#e6e0d5';ctx.lineWidth=1;ctx.strokeRect(px,gap,W-2*px,plotH-gap);
+  const cw=Math.max(1.5,(W-2*px)/n*0.6);
+  for(let i=0;i<n;i++){{
+    const b=bars[i],up=b.c>=b.o;
+    ctx.strokeStyle=up?'#C05050':'#4A8060';ctx.fillStyle=up?'#C05050':'#4A8060';
+    ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(xP(i),yP(b.h));ctx.lineTo(xP(i),yP(b.l));ctx.stroke();
+    const yO=yP(b.o),yC=yP(b.c),top=Math.min(yO,yC),hgt=Math.max(1,Math.abs(yO-yC));
+    ctx.fillRect(xP(i)-cw/2,top,cw,hgt);
+  }}
+  const closes=bars.map(b=>b.c);
+  [[5,'#D4AF37'],[10,'#3B5998'],[20,'#4A8060']].forEach(([p,col])=>{{
+    ctx.strokeStyle=col;ctx.lineWidth=1.4;ctx.beginPath();let started=false;
+    for(let i=p-1;i<n;i++){{const v=closes.slice(i-p+1,i+1).reduce((a,c)=>a+c,0)/p;const x=xP(i),y=yP(v);if(!started){{ctx.moveTo(x,y);started=true}}else ctx.lineTo(x,y)}}
+    ctx.stroke();
+  }});
+  const vmax=Math.max(...bars.map(b=>b.v))||1;
+  for(let i=0;i<n;i++){{const b=bars[i],up=b.c>=b.o;const vh=b.v/vmax*vpH;ctx.fillStyle=up?'rgba(192,80,80,.35)':'rgba(74,128,96,.35)';ctx.fillRect(xP(i)-cw/2,H-vh,cw,vh)}}
+  ctx.fillStyle='#9c938e';ctx.font='10px JetBrains Mono';ctx.fillText('H '+hi.toLocaleString(),px+6,16);ctx.fillText('L '+lo.toLocaleString(),px+6,H-4);
+}}
+document.addEventListener('keydown',e=>{{if(e.key==='Escape')closeDetail()}});
+</script>
 </div></body></html>'''
 
-import os
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, 'w', encoding='utf-8') as f:
     f.write(body)
-print(f'已生成: {OUT} ({len(body)/1024:.0f}KB)')
+print(f'已生成: {OUT} ({len(body)/1024:.0f}KB, 含{sum(len(v) for v in kline_data.values())}品种详情)')
 for tf, label in [('15min', '15分钟'), ('60min', '60分钟'), ('日线', '日线')]:
-    print(f'\n===== {label}级别 =====')
+    print(f'===== {label}级别 =====')
     for title, key, items in groups_by_tf[tf]:
         print(f'  {title}: {", ".join(f"{i["sym"]}({i["score"]:+.0f})" for i in items)}')
