@@ -357,6 +357,27 @@ body = f'''<!DOCTYPE html>
 .hero-meta b{{color:#d4af37}}
 @keyframes rayShift{{0%,100%{{transform:translateX(-4%)}}50%{{transform:translateX(4%)}}}}
 @keyframes moteFloat{{0%,100%{{transform:translateY(0)}}50%{{transform:translateY(-12px)}}}}
+/* PRTS 终端档案封面 · 明日选菜 */
+.prts-hero{{background:#0a0f0a;color:#3dd6b6;border:1px solid #2a4a3a;font:12px/1.7 'JetBrains Mono',Consolas,monospace;padding:22px 26px;margin-bottom:22px;position:relative;box-shadow:0 0 60px rgba(61,214,182,.05) inset;overflow:hidden}}
+.prts-hero::before{{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(61,214,182,.05) 1px,transparent 1px);background-size:100% 22px;pointer-events:none}}
+.prts-top{{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:11px;opacity:.85;border-bottom:1px solid #2a4a3a;padding-bottom:10px;margin-bottom:18px}}
+.prts-grid{{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;font-size:11px}}
+.prts-block div{{line-height:1.8}}
+.prts-bt{{color:#7fffce;opacity:.9}}
+.prts-bc{{color:#2a6a4a}}
+.prts-ep{{text-align:center;margin:6px 0 10px}}
+.prts-epnum{{color:#2a6a4a;letter-spacing:.5em;font-size:12px}}
+.prts-epbox{{color:#7fffce;font-size:12px;letter-spacing:.1em;margin:6px 0}}
+.prts-title{{font-family:Cinzel,serif;font-size:clamp(42px,7vw,76px);color:#3dd6b6;text-shadow:0 0 34px rgba(61,214,182,.4);margin:10px 0 4px;letter-spacing:.08em}}
+.prts-sub{{color:#7fffce;letter-spacing:.28em;font-size:12px}}
+.prts-quote{{color:#5a8a75;font-style:italic;font-size:12px;margin:14px 0 4px}}
+.prts-warn{{text-align:center;color:#ff758f;font-size:11px;margin:14px 0;letter-spacing:.05em}}
+.prts-ready{{display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap;border-top:1px solid #2a4a3a;padding-top:12px;font-size:11px}}
+.prts-bar{{color:#3dd6b6}}
+.prts-ref{{color:#5a8a75}}
+.prts-enter{{background:transparent;border:1px solid #3dd6b6;color:#3dd6b6;padding:8px 18px;font:11px 'JetBrains Mono',Consolas,monospace;cursor:pointer;letter-spacing:.1em}}
+.prts-enter:hover{{background:#3dd6b6;color:#0a0f0a}}
+@media(max-width:640px){{.prts-grid{{grid-template-columns:1fr}}.prts-top{{flex-direction:column}}}}
 /* 三级别汇总 */
 .sum-wrap{{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:auto}}
 .sum-tb{{width:100%;border-collapse:collapse;font:12px 'JetBrains Mono',monospace;min-width:560px}}
@@ -411,14 +432,26 @@ footer{{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26
 @media(max-width:1000px){{.cards{{grid-template-columns:1fr 1fr}}}}
 @media(max-width:640px){{.cards{{grid-template-columns:1fr}}.strat-bar{{grid-template-columns:1fr}}}}
 </style></head><body><div class="shell">
-<header class="hero">
-<div class="hero-bg"></div><div class="hero-light"></div><div class="hero-motes"></div>
-<div class="hero-content">
-<div class="eyebrow">FOUR-FRAME DAILY SELECTION · 向渊行</div>
-<h1>四框架每日选品</h1>
-<div class="hero-sub">缠论 · MACD/RSI · 江恩 · 量价 — 15分钟 / 60分钟 / 日线</div>
-<div class="hero-meta"><span>日线数据 <b>{last_daily}</b></span><span>生成 <b>{now}</b></span><span>品种 <b>{len(universe)}</b></span><span>{sina_note}</span></div>
-</div></header>
+<header class="prts-hero">
+<div class="prts-top"><span>[PRTS v4.82] SYSTEM ARCHIVE // RESTRICTED ACCESS</span><span>[SECURITY CLEARANCE: LEVEL 4 REQUIRED]</span></div>
+<div class="prts-grid">
+<div class="prts-block"><div class="prts-bt">+-- TACTICAL MONITOR --------+</div><div>LAT: 31°14' N &nbsp;LON: 121°28' E</div><div>CATASTROPHE RISK: CLASS IV</div><div>ORIGINIUM DENSITY: 0.84%</div><div>MARKET VOLATILITY: HIGH</div><div class="prts-bc">+----------------------------+</div></div>
+<div class="prts-block"><div class="prts-bt">+-- MISSION STATUS -+</div><div>SECTOR: 工业金属+新能源</div><div>UNIT: {len(universe)} 品种</div><div>LOG: ACTIVE · DATA {last_daily}</div><div>{sina_note}</div><div class="prts-bc">+-------------------+</div></div>
+</div>
+<div class="prts-ep">
+<div class="prts-epnum">0 1 5</div>
+<div class="prts-epbox">+-------+<div>| EP.015 |</div>+-------+</div>
+<div class="prts-title">明日选菜</div>
+<div class="prts-sub">FOUR-FRAME DAILY SELECTION · 缠论 / MACD-RSI / 江恩 / 量价</div>
+<div class="prts-quote">"IN THE SHADOW OF THE MARKET, LIES THE BURDEN OF SELECTION."</div>
+</div>
+<div class="prts-warn">/// WARNING: 未经授权的操作将按协议07立即终止 ///</div>
+<div class="prts-ready">
+<div class="prts-bar">[||||||||||||||||||||||||||||||||] 100% READY</div>
+<div class="prts-ref">REF CODE: RI-015-PRTS-SYS · 生成 {now}</div>
+<button class="prts-enter" onclick="document.querySelector('.tabs').scrollIntoView({{behavior:'smooth'}})">[ ENTER OPERATION ]</button>
+</div>
+</header>
 <nav class="tabs"><button class="active" onclick="showTf('15min',this)">15分钟</button><button onclick="showTf('60min',this)">60分钟</button><button onclick="showTf('日线',this)">日线</button><button onclick="showTf('sum',this)">🌐 汇总</button></nav>
 <div class="toolbar"><button onclick="exportCSV()">📥 导出CSV</button><button onclick="copyShare()">📋 复制分享</button></div>
 {render_tab('15min', groups_by_tf['15min'])}
