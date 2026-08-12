@@ -273,7 +273,11 @@ for tf in ['15min', '60min', '日线']:
                 'strat': strat_full(it, key),
             }
 
-now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+try:
+    _sh = datetime.timezone(datetime.timedelta(hours=8))
+    now = datetime.datetime.now(_sh).strftime('%Y-%m-%d %H:%M')
+except Exception:
+    now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
 last_daily = max((cache[s]['bars'][-1]['time'] for s in universe if cache[s]['bars']), default='?')
 sina_note = '⚠ 15/60min不可达·仅日线' if sina_offline else '15/60min已更新'
 
