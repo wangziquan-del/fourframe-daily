@@ -296,7 +296,7 @@ cross_items = sorted(cross.items(), key=lambda kv: (kv[1]['bull'] - kv[1]['bear'
 
 def render_summary():
     h = ['<div class="tf-tab" id="tf-sum">', '<h3 class="cat-title">🌐 三级别汇总 · 多级别共振（15min / 60min / 日线）</h3>',
-         '<div class="sum-wrap"><table class="sum-tb"><thead><tr><th>品种</th><th>15分钟</th><th>60分钟</th><th>日线</th><th>共振</th></tr></thead><tbody>']
+         '<div class="sum-wrap"><table class="sum-tb"><thead><tr><th>品种</th><th>名称</th><th>15分钟</th><th>60分钟</th><th>日线</th><th>共振</th></tr></thead><tbody>']
     for sym, c in cross_items:
         cells = []
         for tf in ['15min', '60min', '日线']:
