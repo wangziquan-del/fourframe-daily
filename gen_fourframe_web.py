@@ -335,10 +335,11 @@ KJSON = json.dumps(kline_data, ensure_ascii=False, separators=(',', ':'))
 body = f'''<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>四框架每日选品 · 三级别</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=JetBrains+Mono&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=JetBrains+Mono&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=JetBrains+Mono&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet"></noscript>
 <style>
 :root{{--bg:#F6F4F0;--panel:#FFFFFF;--gold:#D4AF37;--rose:#C05050;--blue:#3B5998;--emerald:#4A8060;--ink:#2C2420;--ink2:#6b615c;--ink3:#9c938e;--line:#e3ddd3}}
-*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);background-image:radial-gradient(circle at 12% 15%,rgba(212,175,55,.06),transparent 24%),radial-gradient(circle at 88% 72%,rgba(59,89,152,.05),transparent 28%);color:var(--ink);font:14px/1.6 'Noto Sans SC',system-ui,sans-serif}}
+*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);background-image:radial-gradient(circle at 12% 15%,rgba(212,175,55,.06),transparent 24%),radial-gradient(circle at 88% 72%,rgba(59,89,152,.05),transparent 28%);color:var(--ink);font:14px/1.6 'Noto Sans SC','Microsoft YaHei',system-ui,sans-serif}}
 .shell{{max-width:1600px;margin:auto;padding:26px}}header{{text-align:center;padding:20px 0 6px}}
 .eyebrow{{color:var(--gold);letter-spacing:.34em;font-size:11px}}h1{{font-family:Cinzel,serif;font-size:clamp(30px,4.5vw,52px);margin:8px 0 6px}}
 .sub{{color:var(--ink2);font-size:12px}}.meta{{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:14px 0;color:var(--ink3);font:11px 'JetBrains Mono',monospace}}
