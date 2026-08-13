@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>四框架每日选品 · 三级别</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=JetBrains+Mono&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=JetBrains+Mono&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet"></noscript>
+<style>
+:root{--bg:#F6F4F0;--panel:#FFFFFF;--gold:#D4AF37;--rose:#C05050;--blue:#3B5998;--emerald:#4A8060;--ink:#2C2420;--ink2:#6b615c;--ink3:#9c938e;--line:#e3ddd3}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);background-image:radial-gradient(circle at 12% 15%,rgba(212,175,55,.06),transparent 24%),radial-gradient(circle at 88% 72%,rgba(59,89,152,.05),transparent 28%);color:var(--ink);font:14px/1.6 'Noto Sans SC','Microsoft YaHei',system-ui,sans-serif}
+.shell{max-width:1600px;margin:auto;padding:26px}header{text-align:center;padding:20px 0 6px}
+.eyebrow{color:var(--gold);letter-spacing:.34em;font-size:11px}h1{font-family:Cinzel,serif;font-size:clamp(30px,4.5vw,52px);margin:8px 0 6px}
+.sub{color:var(--ink2);font-size:12px}.meta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:14px 0;color:var(--ink3);font:11px 'JetBrains Mono',monospace}
+.meta b{color:var(--gold)}
+/* 向渊行 · 深渊深海主题封面 */
+.hero{position:relative;overflow:hidden;text-align:center;padding:72px 30px 48px;border-radius:0 0 54px 54px;color:#e8f4f8;margin-bottom:22px;border:1px solid rgba(64,150,175,.28);box-shadow:0 22px 60px rgba(2,18,28,.4)}
+.hero-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(circle at 14% 18%,rgba(24,86,112,.55),transparent 42%),radial-gradient(circle at 86% 78%,rgba(8,44,60,.7),transparent 46%),linear-gradient(158deg,#031b27 0%,#0b3442 46%,#02111b 100%)}
+.hero-light{position:absolute;inset:-25% -12%;z-index:0;pointer-events:none;background:linear-gradient(105deg,transparent 41%,rgba(130,210,230,.12) 46%,rgba(212,175,55,.09) 50%,transparent 55%);animation:rayShift 9s ease-in-out infinite}
+.hero-motes{position:absolute;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle at 20% 30%,rgba(150,225,245,.55) 0 1px,transparent 2px),radial-gradient(circle at 70% 65%,rgba(150,225,245,.4) 0 1px,transparent 2px),radial-gradient(circle at 45% 85%,rgba(212,175,55,.35) 0 1px,transparent 2px);background-size:170px 130px,210px 180px,150px 120px;animation:moteFloat 16s ease-in-out infinite;opacity:.6}
+.hero-content{position:relative;z-index:1}
+.hero .eyebrow{color:rgba(125,195,215,.9);letter-spacing:.4em}
+.hero h1{color:#f2fafc;text-shadow:0 0 30px rgba(80,185,215,.4);background:linear-gradient(180deg,#eaffff 0%,#9fd8e8 52%,#d4af37 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:rgba(185,225,235,.85);font-size:13px;letter-spacing:.07em}
+.hero-meta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:16px;color:rgba(140,200,218,.78);font:11px 'JetBrains Mono',monospace}
+.hero-meta b{color:#d4af37}
+@keyframes rayShift{0%,100%{transform:translateX(-4%)}50%{transform:translateX(4%)}}
+@keyframes moteFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+/* 直到大地变成一颗酸橙 · 旅行封面 */
+.lime-hero{--lime:#8FAE3B;--lime-deep:#5C7A1F;--sky:#B8E2F0;--sky-deep:#4A8CB5;--orange:#FF8C00;--cream:#FBF7EE;--ink-soft:#7A8A66;--gold:#D9B36A;position:relative;overflow:hidden;margin-bottom:22px;background:var(--cream);border:2px solid var(--lime);border-radius:0 0 24px 24px;box-shadow:0 12px 40px rgba(92,122,31,.15);cursor:pointer}
+.lime-sky{height:112px;background:linear-gradient(180deg,var(--sky),var(--cream));border-bottom:1px dashed var(--sky-deep);position:relative}
+.lime-cloud{position:absolute;background:#fff;border-radius:50%;opacity:.92}
+.lime-cloud::before,.lime-cloud::after{content:'';position:absolute;background:#fff;border-radius:50%}
+.lime-cloud1{width:64px;height:22px;top:28px;left:54px}
+.lime-cloud1::before{width:30px;height:30px;top:-14px;left:9px}
+.lime-cloud1::after{width:24px;height:24px;top:-9px;right:7px}
+.lime-cloud2{width:46px;height:16px;top:56px;right:92px;opacity:.7}
+.lime-cloud2::before{width:22px;height:22px;top:-11px;left:7px}
+.lime-cloud2::after{width:18px;height:18px;top:-7px;right:5px}
+.lime-body{position:relative;z-index:2;padding:26px 40px 20px;text-align:center}
+.lime-badge{display:inline-block;background:var(--orange);color:#fff;font:10px 'JetBrains Mono',monospace;letter-spacing:.28em;padding:4px 14px;border-radius:2px;margin-bottom:14px}
+.lime-title{font-family:Cinzel,serif;font-size:clamp(30px,5vw,54px);color:var(--lime-deep);letter-spacing:.06em;margin:4px 0;text-shadow:0 2px 0 rgba(92,122,31,.12)}
+.lime-sub{color:var(--ink-soft);font-size:12px;letter-spacing:.22em;margin-bottom:8px}
+.lime-decor{display:flex;align-items:center;gap:12px;margin:12px auto 8px;max-width:480px}
+.lime-decor::before,.lime-decor::after{content:'';flex:1;height:1px;background:var(--gold)}
+.lime-decor span{color:var(--orange);font-size:14px}
+.lime-meta{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:10px 0 6px;color:var(--ink-soft);font:11px 'JetBrains Mono',monospace}
+.lime-meta b{color:var(--lime-deep)}
+.lime-quote{color:var(--ink-soft);font-style:italic;font-size:11px;margin:8px 0 2px;letter-spacing:.05em}
+.lime-fruit{position:absolute;right:-36px;bottom:-22px;width:156px;height:156px;background:radial-gradient(circle at 35% 30%,#C4DE5C,var(--lime) 60%,var(--lime-deep));border-radius:50%;opacity:.16;z-index:0}
+.lime-stamp{position:absolute;top:130px;right:34px;width:70px;height:82px;z-index:3;border:2px solid var(--sky-deep);background:#fff;padding:6px;opacity:.9;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(8deg)}
+.lime-stamp .img{width:42px;height:42px;border-radius:50%;background:var(--lime);opacity:.4}
+.lime-stamp .txt{font-size:8px;color:var(--sky-deep);margin-top:5px;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
+.lime-foot{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:12px 30px;border-top:2px solid var(--lime);background:var(--cream)}
+.lime-foot .org{font-size:11px;color:var(--ink-soft);letter-spacing:.18em}
+.lime-foot .date{font-size:11px;color:var(--ink-soft);font-family:'JetBrains Mono',monospace}
+@media(max-width:640px){.lime-stamp{display:none}.lime-meta{flex-direction:column;gap:6px}}
+/* 三级别汇总 */
+.sum-wrap{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:auto}
+.sum-tb{width:100%;border-collapse:collapse;font:12px 'JetBrains Mono',monospace;min-width:560px}
+.sum-tb th{position:sticky;top:0;background:#142432;color:#9fb3c1;font:11px 'Noto Sans SC';padding:10px 12px;border-bottom:2px solid var(--gold);text-align:left}
+.sum-tb td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--ink2)}
+.sum-tb tr:hover td{background:#faf6ec}
+.sum-sym{font-weight:700;color:var(--ink)}.sum-name{color:var(--ink3);font-size:11px}
+.sum-pos{color:var(--emerald);font-weight:700}
+.sum-neg{color:var(--rose);font-weight:700}
+.sum-neu{color:var(--gold)}
+.sum-val{color:var(--blue);font-weight:700}
+.sum-none{color:var(--ink3);opacity:.4}
+.sum-res{font:11px 'Noto Sans SC';white-space:nowrap}
+.sum-tb tr.row-bull td{background:#f0f8f2}.sum-tb tr.row-bear td{background:#fbf1f0}
+.sum-tb tr.row-strong-bull td{background:#d9efdf}.sum-tb tr.row-strong-bear td{background:#f7ddda}
+.sum-tb tr.row-bull:hover td,.sum-tb tr.row-bear:hover td,.sum-tb tr.row-strong-bull:hover td,.sum-tb tr.row-strong-bear:hover td{filter:brightness(.97)}
+.toolbar{display:flex;gap:10px;justify-content:center;margin:14px 0}
+.toolbar button{padding:8px 18px;border:1px solid var(--gold);border-radius:999px;background:var(--panel);color:var(--ink2);font:600 12px 'Noto Sans SC';cursor:pointer}
+.toolbar button:hover{background:var(--gold);color:#fff}
+.tabs{display:flex;gap:8px;justify-content:center;margin:16px 0}.tabs button{padding:9px 22px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink2);font:600 13px 'Noto Sans SC';cursor:pointer}
+.tabs button.active{background:var(--gold);color:#fff;border-color:var(--gold)}
+.tf-tab{display:none}.tf-tab.active{display:block}
+.cat-title{font-family:Cinzel,serif;font-weight:600;font-size:19px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin:22px 0 12px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.pcard{background:var(--panel);border:1px solid var(--line);border-top-left-radius:40px;border-top-right-radius:40px;padding:16px 16px 10px;position:relative;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.pcard:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(44,36,32,.10)}
+.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),#f0dfa8)}
+.phead{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}.sym{font:700 20px 'JetBrains Mono';color:var(--ink)}
+.pname{color:var(--ink2);font-size:12px}.pprice{margin-left:auto;font:600 16px 'JetBrains Mono';color:var(--blue)}
+.pscore{font:700 12px 'JetBrains Mono';color:var(--gold)}
+.ft{width:100%;border-collapse:collapse;font-size:12px}.ft td{padding:5px 2px;border-bottom:1px solid var(--line);vertical-align:top}
+.ft td.k{white-space:nowrap;color:var(--gold);font:600 11px;width:56px}
+.hint{margin-top:8px;text-align:right;color:var(--blue);font:10px 'JetBrains Mono';opacity:.75}
+footer{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26px 0;padding-top:12px;border-top:1px solid var(--line)}
+#modal{display:none;position:fixed;inset:0;background:rgba(20,15,10,.55);z-index:50;align-items:center;justify-content:center}
+#modal.show{display:flex}
+.mbox{background:var(--bg);border:1px solid var(--gold);border-radius:18px;max-width:820px;width:92%;max-height:90vh;overflow:auto;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.mhead{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}.mhead .sym{font-size:26px}.mhead .close{margin-left:auto;background:none;border:1px solid var(--line);border-radius:8px;padding:4px 12px;cursor:pointer;color:var(--ink2);font-size:13px}
+.mchart{width:100%;height:340px;background:#fff;border:1px solid var(--line);border-radius:12px;margin:12px 0}
+.strat-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.m-trail{margin-top:10px;padding:9px 12px;border:1px dashed var(--line);border-radius:8px;background:var(--panel);color:var(--ink2);font:11px 'JetBrains Mono'}
+.sbox{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+.sbox b{display:block;color:var(--gold);font:10px 'JetBrains Mono';letter-spacing:.1em;margin-bottom:4px}
+.sbox span{font:700 15px 'JetBrains Mono'}
+.sbox.dir span{color:var(--emerald)}.sbox.tp span{color:var(--blue)}.sbox.sl span{color:var(--rose)}
+.mdet{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;color:var(--ink2);font:11px 'JetBrains Mono'}
+.mdet i{font-style:normal;background:var(--panel);border:1px solid var(--line);padding:3px 8px;border-radius:6px}
+.m-levels{display:flex;gap:8px;margin:10px 0 0}
+.m-levels button{padding:6px 16px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink2);font:600 12px 'Noto Sans SC';cursor:pointer}
+.m-levels button.active{background:var(--gold);color:#fff;border-color:var(--gold)}
+.m-levels button:disabled{opacity:.3;cursor:default}
+@media(max-width:1000px){.cards{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.cards{grid-template-columns:1fr}.strat-bar{grid-template-columns:1fr}}
+</style></head><body><div class="shell">
+<header class="lime-hero" onclick="document.getElementById('tf-15min').scrollIntoView({behavior:'smooth'})" title="点击进入选品">
+<div class="lime-sky"><div class="lime-cloud lime-cloud1"></div><div class="lime-cloud lime-cloud2"></div></div>
+<div class="lime-stamp"><div class="img"></div><div class="txt">FOUR-FRAME</div></div>
+<div class="lime-body">
+<span class="lime-badge">FOUR-FRAME DAILY · 旅行手帐</span>
+<div class="lime-title">四框架每日选品</div>
+<div class="lime-sub">缠论 / MACD-RSI / 江恩 / 量价 · 三级别扫描</div>
+<div class="lime-decor"><span>✦</span></div>
+<div class="lime-meta"><span>品种 <b>74</b></span><span>数据截至 <b>2026-08-12</b></span><span>15/60min已更新</span><span>生成 <b>2026-08-13 11:29</b></span></div>
+<div class="lime-quote">"在市场的影子之下,躺着的正是选择的重量。"</div>
+</div>
+<div class="lime-fruit"></div>
+<div class="lime-foot"><span class="org">YONGAN RESEARCH · FOUR-FRAME</span><span class="date">2026-08-13 11:29</span></div>
+</header>
+<nav class="tabs"><button class="active" onclick="showTf('15min',this)">15分钟</button><button onclick="showTf('60min',this)">60分钟</button><button onclick="showTf('日线',this)">日线</button><button onclick="showTf('sum',this)">🌐 汇总</button></nav>
+<div class="toolbar"><button onclick="exportCSV()">📥 导出CSV</button><button onclick="copyShare()">📋 复制分享</button></div>
+<div class="tf-tab" id="tf-15min">
+<h3 class="cat-title">🟢 好 · 技术图形最强</h3><div class="cards">
+<article class="pcard" onclick="openDetail('15min','A')">
+<div class="phead"><span class="sym">A</span><span class="pname">豆一</span><span class="pprice">4,910</span><span class="pscore">+45</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[4,861~4,896]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI73 · 多头</td></tr><tr><td class="k">江恩</td><td>位68% · 4,864~4,932</td></tr><tr><td class="k">量价</td><td>量比3.25·放量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('15min','FG')">
+<div class="phead"><span class="sym">FG</span><span class="pname">玻璃</span><span class="pprice">863</span><span class="pscore">+45</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[883~888]下 → S3</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI24 · 震荡</td></tr><tr><td class="k">江恩</td><td>位8% · 859~909</td></tr><tr><td class="k">量价</td><td>量比0.07·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('15min','TS')">
+<div class="phead"><span class="sym">TS</span><span class="pname">TS</span><span class="pprice">103</span><span class="pscore">+45</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[103~103]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI67 · 多头</td></tr><tr><td class="k">江恩</td><td>位72% · 103~103</td></tr><tr><td class="k">量价</td><td>量比0.78·平量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+</div>
+<h3 class="cat-title">🔴 坏 · 空头最扎实</h3><div class="cards">
+<article class="pcard" onclick="openDetail('15min','JM')">
+<div class="phead"><span class="sym">JM</span><span class="pname">焦煤</span><span class="pprice">1,472</span><span class="pscore">-41</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[1,462~1,468]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>死叉 RSI63 · 震荡</td></tr><tr><td class="k">江恩</td><td>位92% · 1,282~1,488</td></tr><tr><td class="k">量价</td><td>量比0.30·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('15min','LC')">
+<div class="phead"><span class="sym">LC</span><span class="pname">碳酸锂</span><span class="pprice">149,060</span><span class="pscore">-41</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[147,100~148,800]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>死叉 RSI46 · 震荡</td></tr><tr><td class="k">江恩</td><td>位84% · 139,300~150,880</td></tr><tr><td class="k">量价</td><td>量比0.28·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('15min','PS')">
+<div class="phead"><span class="sym">PS</span><span class="pname">多晶硅</span><span class="pprice">38,245</span><span class="pscore">-40</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[37,900~38,110]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>死叉 RSI58 · 震荡</td></tr><tr><td class="k">江恩</td><td>位87% · 35,900~38,605</td></tr><tr><td class="k">量价</td><td>量比0.05·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+</div>
+<h3 class="cat-title">⚪ 中性待突破 · 区间蓄势</h3><div class="cards">
+<article class="pcard" onclick="openDetail('15min','BZ')">
+<div class="phead"><span class="sym">BZ</span><span class="pname">纯苯</span><span class="pprice">7,240</span><span class="pscore">+20</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[7,198~7,225]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI58 · 震荡</td></tr><tr><td class="k">江恩</td><td>位50% · 7,144~7,335</td></tr><tr><td class="k">量价</td><td>量比0.44·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('15min','JD')">
+<div class="phead"><span class="sym">JD</span><span class="pname">鸡蛋</span><span class="pprice">3,908</span><span class="pscore">+20</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[3,847~3,876]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI65 · 震荡</td></tr><tr><td class="k">江恩</td><td>位61% · 3,801~3,976</td></tr><tr><td class="k">量价</td><td>量比0.54·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('15min','M')">
+<div class="phead"><span class="sym">M</span><span class="pname">豆粕</span><span class="pprice">3,156</span><span class="pscore">+20</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>单边上</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI60 · 震荡</td></tr><tr><td class="k">江恩</td><td>位68% · 3,117~3,174</td></tr><tr><td class="k">量价</td><td>量比0.49·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+</div>
+<h3 class="cat-title">🎯 性价比 · 低位金叉</h3><div class="cards">
+<article class="pcard" onclick="openDetail('15min','C')">
+<div class="phead"><span class="sym">C</span><span class="pname">玉米</span><span class="pprice">2,230</span><span class="pscore">+35</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[2,259~2,263]下 → S3</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI62 · 震荡</td></tr><tr><td class="k">江恩</td><td>位16% · 2,221~2,276</td></tr><tr><td class="k">量价</td><td>量比0.62·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('15min','UR')">
+<div class="phead"><span class="sym">UR</span><span class="pname">尿素</span><span class="pprice">1,676</span><span class="pscore">+35</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>单边下</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI43 · 震荡</td></tr><tr><td class="k">江恩</td><td>位23% · 1,660~1,730</td></tr><tr><td class="k">量价</td><td>量比0.31·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('15min','CS')">
+<div class="phead"><span class="sym">CS</span><span class="pname">淀粉</span><span class="pprice">2,533</span><span class="pscore">+11</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[2,587~2,597]下 → S3</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI92 · 震荡</td></tr><tr><td class="k">江恩</td><td>位32% · 2,499~2,605</td></tr><tr><td class="k">量价</td><td>量比0.14·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+</div>
+</div>
+<div class="tf-tab" id="tf-60min">
+<h3 class="cat-title">🟢 好 · 技术图形最强</h3><div class="cards">
+<article class="pcard" onclick="openDetail('60min','SP')">
+<div class="phead"><span class="sym">SP</span><span class="pname">纸浆</span><span class="pprice">4,676</span><span class="pscore">+56</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[4,660~4,676]内</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI70 · 多头</td></tr><tr><td class="k">江恩</td><td>位60% · 4,558~4,756</td></tr><tr><td class="k">量价</td><td>量比1.31·放量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('60min','PX')">
+<div class="phead"><span class="sym">PX</span><span class="pname">对二甲苯</span><span class="pprice">8,036</span><span class="pscore">+45</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[7,876~7,938]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI56 · 多头</td></tr><tr><td class="k">江恩</td><td>位56% · 7,654~8,342</td></tr><tr><td class="k">量价</td><td>量比0.82·平量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('60min','PF')">
+<div class="phead"><span class="sym">PF</span><span class="pname">短纤</span><span class="pprice">7,418</span><span class="pscore">+45</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[7,312~7,378]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI57 · 多头</td></tr><tr><td class="k">江恩</td><td>位73% · 7,086~7,538</td></tr><tr><td class="k">量价</td><td>量比1.09·平量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+</div>
+<h3 class="cat-title">🔴 坏 · 空头最扎实</h3><div class="cards">
+<article class="pcard" onclick="openDetail('60min','PT')">
+<div class="phead"><span class="sym">PT</span><span class="pname">铂</span><span class="pprice">432</span><span class="pscore">-61</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[430~439]内</td></tr><tr><td class="k">MACD/RSI</td><td>死叉 RSI49 · 空头</td></tr><tr><td class="k">江恩</td><td>位78% · 390~444</td></tr><tr><td class="k">量价</td><td>量比0.01·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('60min','CJ')">
+<div class="phead"><span class="sym">CJ</span><span class="pname">红枣</span><span class="pprice">8,255</span><span class="pscore">-61</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>单边下</td></tr><tr><td class="k">MACD/RSI</td><td>死叉 RSI39 · 空头</td></tr><tr><td class="k">江恩</td><td>位82% · 7,585~8,400</td></tr><tr><td class="k">量价</td><td>量比0.02·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('60min','P')">
+<div class="phead"><span class="sym">P</span><span class="pname">棕榈</span><span class="pprice">9,689</span><span class="pscore">-56</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[9,689~9,692]内</td></tr><tr><td class="k">MACD/RSI</td><td>死叉 RSI39 · 空头</td></tr><tr><td class="k">江恩</td><td>位85% · 9,230~9,773</td></tr><tr><td class="k">量价</td><td>量比1.03·平量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+</div>
+<h3 class="cat-title">⚪ 中性待突破 · 区间蓄势</h3><div class="cards">
+<article class="pcard" onclick="openDetail('60min','LG')">
+<div class="phead"><span class="sym">LG</span><span class="pname">原木</span><span class="pprice">828</span><span class="pscore">+20</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>单边上</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI52 · 震荡</td></tr><tr><td class="k">江恩</td><td>位49% · 818~839</td></tr><tr><td class="k">量价</td><td>量比0.59·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('60min','PR')">
+<div class="phead"><span class="sym">PR</span><span class="pname">瓶片</span><span class="pprice">7,176</span><span class="pscore">+20</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[7,058~7,206]内</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI55 · 震荡</td></tr><tr><td class="k">江恩</td><td>位53% · 6,834~7,484</td></tr><tr><td class="k">量价</td><td>量比0.42·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('60min','FU')">
+<div class="phead"><span class="sym">FU</span><span class="pname">燃油</span><span class="pprice">3,478</span><span class="pscore">+20</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>单边上</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI56 · 震荡</td></tr><tr><td class="k">江恩</td><td>位56% · 3,170~3,724</td></tr><tr><td class="k">量价</td><td>量比0.02·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+</div>
+<h3 class="cat-title">🎯 性价比 · 低位金叉</h3><div class="cards">
+<article class="pcard" onclick="openDetail('60min','RM')">
+<div class="phead"><span class="sym">RM</span><span class="pname">菜粕</span><span class="pprice">2,174</span><span class="pscore">+40</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[2,164~2,176]内</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI51 · 震荡</td></tr><tr><td class="k">江恩</td><td>位7% · 2,163~2,330</td></tr><tr><td class="k">量价</td><td>量比1.22·平量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('60min','EC')">
+<div class="phead"><span class="sym">EC</span><span class="pname">集运欧线</span><span class="pprice">1,629</span><span class="pscore">+39</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>单边下</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI50 · 震荡</td></tr><tr><td class="k">江恩</td><td>位8% · 1,511~2,910</td></tr><tr><td class="k">量价</td><td>量比0.02·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('60min','JD')">
+<div class="phead"><span class="sym">JD</span><span class="pname">鸡蛋</span><span class="pprice">3,907</span><span class="pscore">+21</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>单边下</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI45 · 震荡</td></tr><tr><td class="k">江恩</td><td>位30% · 3,801~4,150</td></tr><tr><td class="k">量价</td><td>量比0.02·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+</div>
+</div>
+<div class="tf-tab" id="tf-日线">
+<h3 class="cat-title">🟢 好 · 技术图形最强</h3><div class="cards">
+<article class="pcard" onclick="openDetail('日线','PT')">
+<div class="phead"><span class="sym">PT</span><span class="pname">铂</span><span class="pprice">435</span><span class="pscore">+59</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>单边上</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI61 · 多头</td></tr><tr><td class="k">江恩</td><td>位47% · 380~497</td></tr><tr><td class="k">量价</td><td>量比1.54·放量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('日线','SF')">
+<div class="phead"><span class="sym">SF</span><span class="pname">硅铁</span><span class="pprice">5,924</span><span class="pscore">+55</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[5,852~5,928]内</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI57 · 多头</td></tr><tr><td class="k">江恩</td><td>位68% · 5,584~6,086</td></tr><tr><td class="k">量价</td><td>量比1.60·放量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('日线','AG')">
+<div class="phead"><span class="sym">AG</span><span class="pname">沪银</span><span class="pprice">16,154</span><span class="pscore">+52</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[13,986~14,675]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI69 · 多头</td></tr><tr><td class="k">江恩</td><td>位47% · 13,329~19,288</td></tr><tr><td class="k">量价</td><td>量比1.15·平量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+</div>
+<h3 class="cat-title">🔴 坏 · 空头最扎实</h3><div class="cards">
+<article class="pcard" onclick="openDetail('日线','SS')">
+<div class="phead"><span class="sym">SS</span><span class="pname">不锈钢</span><span class="pprice">14,535</span><span class="pscore">-45</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[14,455~14,730]内</td></tr><tr><td class="k">MACD/RSI</td><td>死叉 RSI41 · 空头</td></tr><tr><td class="k">江恩</td><td>位31% · 14,235~15,205</td></tr><tr><td class="k">量价</td><td>量比0.88·平量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('日线','LG')">
+<div class="phead"><span class="sym">LG</span><span class="pname">原木</span><span class="pprice">829</span><span class="pscore">-40</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[824~825]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>死叉 RSI52 · 震荡</td></tr><tr><td class="k">江恩</td><td>位83% · 780~839</td></tr><tr><td class="k">量价</td><td>量比0.48·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('日线','EG')">
+<div class="phead"><span class="sym">EG</span><span class="pname">乙二醇</span><span class="pprice">4,908</span><span class="pscore">-36</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[4,770~4,947]内</td></tr><tr><td class="k">MACD/RSI</td><td>死叉 RSI51 · 震荡</td></tr><tr><td class="k">江恩</td><td>位81% · 3,897~5,140</td></tr><tr><td class="k">量价</td><td>量比1.28·平量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+</div>
+<h3 class="cat-title">⚪ 中性待突破 · 区间蓄势</h3><div class="cards">
+<article class="pcard" onclick="openDetail('日线','PB')">
+<div class="phead"><span class="sym">PB</span><span class="pname">沪铅</span><span class="pprice">15,925</span><span class="pscore">+21</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[15,490~15,940]内</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI51 · 震荡</td></tr><tr><td class="k">江恩</td><td>位45% · 15,205~16,820</td></tr><tr><td class="k">量价</td><td>量比0.68·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('日线','BR')">
+<div class="phead"><span class="sym">BR</span><span class="pname">丁二烯橡胶</span><span class="pprice">13,425</span><span class="pscore">+21</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[12,760~13,060]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI41 · 震荡</td></tr><tr><td class="k">江恩</td><td>位42% · 11,585~15,940</td></tr><tr><td class="k">量价</td><td>量比0.36·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('日线','IF')">
+<div class="phead"><span class="sym">IF</span><span class="pname">沪深300</span><span class="pprice">4,641</span><span class="pscore">+21</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[4,494~4,619]上 → B3</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI48 · 震荡</td></tr><tr><td class="k">江恩</td><td>位39% · 4,420~4,994</td></tr><tr><td class="k">量价</td><td>量比0.65·缩量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+</div>
+<h3 class="cat-title">🎯 性价比 · 低位金叉</h3><div class="cards">
+<article class="pcard" onclick="openDetail('日线','FG')">
+<div class="phead"><span class="sym">FG</span><span class="pname">玻璃</span><span class="pprice">878</span><span class="pscore">+42</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[866~894]内</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI42 · 震荡</td></tr><tr><td class="k">江恩</td><td>位6% · 865~1,065</td></tr><tr><td class="k">量价</td><td>量比1.02·平量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('日线','PK')">
+<div class="phead"><span class="sym">PK</span><span class="pname">花生</span><span class="pprice">8,202</span><span class="pscore">+40</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[8,150~8,232]内</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI45 · 震荡</td></tr><tr><td class="k">江恩</td><td>位20% · 8,100~8,610</td></tr><tr><td class="k">量价</td><td>量比0.82·平量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+<article class="pcard" onclick="openDetail('日线','C')">
+<div class="phead"><span class="sym">C</span><span class="pname">玉米</span><span class="pprice">2,263</span><span class="pscore">+40</span></div>
+<table class="ft"><tr><td class="k">缠论</td><td>中枢[2,256~2,276]内</td></tr><tr><td class="k">MACD/RSI</td><td>金叉 RSI42 · 震荡</td></tr><tr><td class="k">江恩</td><td>位21% · 2,235~2,371</td></tr><tr><td class="k">量价</td><td>量比0.85·平量</td></tr></table>
+<div class="hint">点击查看 K线 + 策略 →</div></article>
+</div>
+</div>
+<div class="tf-tab" id="tf-sum">
+<h3 class="cat-title">🌐 三级别汇总 · 多级别共振（15min / 60min / 日线）</h3>
+<div class="sum-wrap"><table class="sum-tb"><thead><tr><th>品种</th><th>名称</th><th>15分钟</th><th>60分钟</th><th>日线</th><th>共振</th></tr></thead><tbody>
+<tr class="row-bull" onclick="openSum('FG')" style="cursor:pointer"><td class="sum-sym">FG</td><td class="sum-name">玻璃</td><td class="sum-pos">好</td><td class="sum-none">—</td><td class="sum-val">性价比</td><td class="sum-res">🟢强偏多</td></tr>
+<tr class="row-bull" onclick="openSum('C')" style="cursor:pointer"><td class="sum-sym">C</td><td class="sum-name">玉米</td><td class="sum-val">性价比</td><td class="sum-none">—</td><td class="sum-val">性价比</td><td class="sum-res">🟢强偏多</td></tr>
+<tr class="" onclick="openSum('A')" style="cursor:pointer"><td class="sum-sym">A</td><td class="sum-name">豆一</td><td class="sum-pos">好</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('TS')" style="cursor:pointer"><td class="sum-sym">TS</td><td class="sum-name">TS</td><td class="sum-pos">好</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('JD')" style="cursor:pointer"><td class="sum-sym">JD</td><td class="sum-name">鸡蛋</td><td class="sum-neu">中性</td><td class="sum-val">性价比</td><td class="sum-none">—</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('UR')" style="cursor:pointer"><td class="sum-sym">UR</td><td class="sum-name">尿素</td><td class="sum-val">性价比</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('CS')" style="cursor:pointer"><td class="sum-sym">CS</td><td class="sum-name">淀粉</td><td class="sum-val">性价比</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('SP')" style="cursor:pointer"><td class="sum-sym">SP</td><td class="sum-name">纸浆</td><td class="sum-none">—</td><td class="sum-pos">好</td><td class="sum-none">—</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('PX')" style="cursor:pointer"><td class="sum-sym">PX</td><td class="sum-name">对二甲苯</td><td class="sum-none">—</td><td class="sum-pos">好</td><td class="sum-none">—</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('PF')" style="cursor:pointer"><td class="sum-sym">PF</td><td class="sum-name">短纤</td><td class="sum-none">—</td><td class="sum-pos">好</td><td class="sum-none">—</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('RM')" style="cursor:pointer"><td class="sum-sym">RM</td><td class="sum-name">菜粕</td><td class="sum-none">—</td><td class="sum-val">性价比</td><td class="sum-none">—</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('EC')" style="cursor:pointer"><td class="sum-sym">EC</td><td class="sum-name">集运欧线</td><td class="sum-none">—</td><td class="sum-val">性价比</td><td class="sum-none">—</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('SF')" style="cursor:pointer"><td class="sum-sym">SF</td><td class="sum-name">硅铁</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-pos">好</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('AG')" style="cursor:pointer"><td class="sum-sym">AG</td><td class="sum-name">沪银</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-pos">好</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('PK')" style="cursor:pointer"><td class="sum-sym">PK</td><td class="sum-name">花生</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-val">性价比</td><td class="sum-res">🟡偏多</td></tr>
+<tr class="" onclick="openSum('BZ')" style="cursor:pointer"><td class="sum-sym">BZ</td><td class="sum-name">纯苯</td><td class="sum-neu">中性</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-res">⚪震荡/分散</td></tr>
+<tr class="" onclick="openSum('M')" style="cursor:pointer"><td class="sum-sym">M</td><td class="sum-name">豆粕</td><td class="sum-neu">中性</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-res">⚪震荡/分散</td></tr>
+<tr class="" onclick="openSum('PT')" style="cursor:pointer"><td class="sum-sym">PT</td><td class="sum-name">铂</td><td class="sum-none">—</td><td class="sum-neg">坏</td><td class="sum-pos">好</td><td class="sum-res">⚪震荡/分散</td></tr>
+<tr class="" onclick="openSum('PR')" style="cursor:pointer"><td class="sum-sym">PR</td><td class="sum-name">瓶片</td><td class="sum-none">—</td><td class="sum-neu">中性</td><td class="sum-none">—</td><td class="sum-res">⚪震荡/分散</td></tr>
+<tr class="" onclick="openSum('FU')" style="cursor:pointer"><td class="sum-sym">FU</td><td class="sum-name">燃油</td><td class="sum-none">—</td><td class="sum-neu">中性</td><td class="sum-none">—</td><td class="sum-res">⚪震荡/分散</td></tr>
+<tr class="" onclick="openSum('PB')" style="cursor:pointer"><td class="sum-sym">PB</td><td class="sum-name">沪铅</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-neu">中性</td><td class="sum-res">⚪震荡/分散</td></tr>
+<tr class="" onclick="openSum('BR')" style="cursor:pointer"><td class="sum-sym">BR</td><td class="sum-name">丁二烯橡胶</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-neu">中性</td><td class="sum-res">⚪震荡/分散</td></tr>
+<tr class="" onclick="openSum('IF')" style="cursor:pointer"><td class="sum-sym">IF</td><td class="sum-name">沪深300</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-neu">中性</td><td class="sum-res">⚪震荡/分散</td></tr>
+<tr class="" onclick="openSum('JM')" style="cursor:pointer"><td class="sum-sym">JM</td><td class="sum-name">焦煤</td><td class="sum-neg">坏</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-res">🔵偏空</td></tr>
+<tr class="" onclick="openSum('LC')" style="cursor:pointer"><td class="sum-sym">LC</td><td class="sum-name">碳酸锂</td><td class="sum-neg">坏</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-res">🔵偏空</td></tr>
+<tr class="" onclick="openSum('PS')" style="cursor:pointer"><td class="sum-sym">PS</td><td class="sum-name">多晶硅</td><td class="sum-neg">坏</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-res">🔵偏空</td></tr>
+<tr class="" onclick="openSum('CJ')" style="cursor:pointer"><td class="sum-sym">CJ</td><td class="sum-name">红枣</td><td class="sum-none">—</td><td class="sum-neg">坏</td><td class="sum-none">—</td><td class="sum-res">🔵偏空</td></tr>
+<tr class="" onclick="openSum('P')" style="cursor:pointer"><td class="sum-sym">P</td><td class="sum-name">棕榈</td><td class="sum-none">—</td><td class="sum-neg">坏</td><td class="sum-none">—</td><td class="sum-res">🔵偏空</td></tr>
+<tr class="" onclick="openSum('LG')" style="cursor:pointer"><td class="sum-sym">LG</td><td class="sum-name">原木</td><td class="sum-none">—</td><td class="sum-neu">中性</td><td class="sum-neg">坏</td><td class="sum-res">🔵偏空</td></tr>
+<tr class="" onclick="openSum('SS')" style="cursor:pointer"><td class="sum-sym">SS</td><td class="sum-name">不锈钢</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-neg">坏</td><td class="sum-res">🔵偏空</td></tr>
+<tr class="" onclick="openSum('EG')" style="cursor:pointer"><td class="sum-sym">EG</td><td class="sum-name">乙二醇</td><td class="sum-none">—</td><td class="sum-none">—</td><td class="sum-neg">坏</td><td class="sum-res">🔵偏空</td></tr>
+</tbody></table></div></div>
+<footer>数据源：日线=知几 · 15/60min=新浪实时 ｜ 每级别独立四框架评分 ｜ 每日 09:05/11:25/14:00/21:30 自动更新 ｜ 不构成投资建议</footer>
+<div id="modal" onclick="if(event.target===this)closeDetail()"><div class="mbox">
+<div class="mhead"><span class="sym" id="m-sym">—</span><span class="pname" id="m-name"></span><span class="pprice" id="m-price"></span><button class="close" onclick="closeDetail()">关闭 ✕</button></div>
+<div class="m-levels" id="m-levels"><button id="lv-15min" onclick="showLevel('15min')">15分钟</button><button id="lv-60min" onclick="showLevel('60min')">60分钟</button><button id="lv-日线" onclick="showLevel('日线')">日线</button></div>
+<div class="mdet" id="m-det"></div>
+<canvas class="mchart" id="m-chart" width="760" height="340"></canvas>
+<div class="strat-bar"><div class="sbox dir"><b>方向 / 进场</b><span id="m-entry">—</span></div><div class="sbox tp"><b>止盈①</b><span id="m-tp1">—</span></div><div class="sbox tp"><b>止盈②</b><span id="m-tp2">—</span></div><div class="sbox sl"><b>止损</b><span id="m-sl">—</span></div></div>
+<div class="m-trail" id="m-trail">移动止盈：—</div>
+</div></div>
+<script src="data.js" defer></script>
+<script>
+function K(tf,sym){return ((window.KDATA||{})[tf]||{})[sym];}
+function showTf(tf,btn){document.querySelectorAll('.tf-tab').forEach(x=>x.classList.remove('active'));document.getElementById('tf-'+tf).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
+let curSym=null,curTf='15min';
+function renderLevel(){const d=K(curTf,curSym);if(!d)return;document.getElementById('m-sym').textContent=curSym;document.getElementById('m-name').textContent=d.name;document.getElementById('m-price').textContent=d.price.toLocaleString();const dirColor=d.strat.dir.includes('多')?'#4A8060':(d.strat.dir.includes('空')?'#C05050':'#D4AF37');document.getElementById('m-entry').textContent=d.strat.dir+' ｜ '+d.strat.entry;document.getElementById('m-entry').style.color=dirColor;document.getElementById('m-tp1').textContent=d.strat.tp1;document.getElementById('m-tp2').textContent=d.strat.tp2;document.getElementById('m-sl').textContent=d.strat.sl;document.getElementById('m-trail').textContent='移动止盈：'+d.strat.trail;document.getElementById('m-det').innerHTML=['评分 '+d.score,'江恩 '+d.gann+'%','RSI '+d.rsi].map(x=>'<i>'+x+'</i>').join('');drawKline(d.bars)}
+function openDetail(tf,sym){curSym=sym;curTf=tf;document.querySelectorAll('.m-levels button').forEach(b=>b.classList.toggle('active',b.id==='lv-'+tf));renderLevel();document.getElementById('modal').classList.add('show')}
+function openSum(sym){const tfs=['15min','60min','日线'];const tf=tfs.find(t=>K(t,sym))||tfs[0];curSym=sym;curTf=tf;tfs.forEach(t=>{const btn=document.getElementById('lv-'+t);const has=!!K(t,sym);btn.disabled=!has;btn.classList.toggle('active',t===tf)});renderLevel();document.getElementById('modal').classList.add('show')}
+function showLevel(tf){if(!curSym)return;curTf=tf;document.querySelectorAll('.m-levels button').forEach(b=>b.classList.toggle('active',b.id==='lv-'+tf));renderLevel()}
+function closeDetail(){document.getElementById('modal').classList.remove('show')}
+function drawKline(bars){
+  const cv=document.getElementById('m-chart'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);if(!bars||!bars.length)return;
+  const n=bars.length,px=6,plotH=H*0.72,vpH=H*0.20,gap=14;
+  let hi=Math.max(...bars.map(b=>b.h)),lo=Math.min(...bars.map(b=>b.l));
+  const pad=(hi-lo)*0.06,priceH=plotH-gap;
+  const yP=p=>gap+(hi+pad-p)/(hi-lo+2*pad)*priceH;
+  const xP=i=>px+i*(W-2*px)/n;
+  ctx.strokeStyle='#e6e0d5';ctx.lineWidth=1;ctx.strokeRect(px,gap,W-2*px,plotH-gap);
+  const cw=Math.max(1.5,(W-2*px)/n*0.6);
+  for(let i=0;i<n;i++){
+    const b=bars[i],up=b.c>=b.o;
+    ctx.strokeStyle=up?'#C05050':'#4A8060';ctx.fillStyle=up?'#C05050':'#4A8060';
+    ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(xP(i),yP(b.h));ctx.lineTo(xP(i),yP(b.l));ctx.stroke();
+    const yO=yP(b.o),yC=yP(b.c),top=Math.min(yO,yC),hgt=Math.max(1,Math.abs(yO-yC));
+    ctx.fillRect(xP(i)-cw/2,top,cw,hgt);
+  }
+  const closes=bars.map(b=>b.c);
+  [[5,'#D4AF37'],[10,'#3B5998'],[20,'#4A8060']].forEach(([p,col])=>{
+    ctx.strokeStyle=col;ctx.lineWidth=1.4;ctx.beginPath();let started=false;
+    for(let i=p-1;i<n;i++){const v=closes.slice(i-p+1,i+1).reduce((a,c)=>a+c,0)/p;const x=xP(i),y=yP(v);if(!started){ctx.moveTo(x,y);started=true}else ctx.lineTo(x,y)}
+    ctx.stroke();
+  });
+  const vmax=Math.max(...bars.map(b=>b.v))||1;
+  for(let i=0;i<n;i++){const b=bars[i],up=b.c>=b.o;const vh=b.v/vmax*vpH;ctx.fillStyle=up?'rgba(192,80,80,.35)':'rgba(74,128,96,.35)';ctx.fillRect(xP(i)-cw/2,H-vh,cw,vh)}
+  ctx.fillStyle='#9c938e';ctx.font='10px JetBrains Mono';ctx.fillText('H '+hi.toLocaleString(),px+6,16);ctx.fillText('L '+lo.toLocaleString(),px+6,H-4);
+}
+function exportCSV(){let csv='品种,名称,级别,分类,评分,现价,方向,进场,止盈1,止盈2,止损\n';['15min','60min','日线'].forEach(tf=>{Object.keys((window.KDATA||{})[tf]||{}).forEach(sym=>{const d=(window.KDATA||{})[tf][sym],s=d.strat;csv+=[sym,d.name,tf,d.cat,d.score,d.price,s.dir,s.entry,s.tp1,s.tp2,s.sl].join(',')+'\n'})});const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='四框架选品_'+new Date().toISOString().slice(0,10)+'.csv';a.click()}
+function copyShare(){const d=new Date().toLocaleString('zh-CN');let txt='四框架每日选品 '+d+'\n================\n';['15min','60min','日线'].forEach(tf=>{txt+='\n【'+tf+'】\n';Object.keys((window.KDATA||{})[tf]||{}).forEach(sym=>{const x=(window.KDATA||{})[tf][sym];txt+=sym+' '+x.name+' '+x.strat.dir+' 进场'+x.strat.entry+' 止盈'+x.strat.tp1+'/'+x.strat.tp2+' 止损'+x.strat.sl+'\n'})});navigator.clipboard.writeText(txt).then(()=>alert('已复制分享文本'))}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail()});
+</script>
+</div></body></html>
