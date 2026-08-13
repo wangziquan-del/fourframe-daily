@@ -361,27 +361,35 @@ body = f'''<!DOCTYPE html>
 .hero-meta b{{color:#d4af37}}
 @keyframes rayShift{{0%,100%{{transform:translateX(-4%)}}50%{{transform:translateX(4%)}}}}
 @keyframes moteFloat{{0%,100%{{transform:translateY(0)}}50%{{transform:translateY(-12px)}}}}
-/* PRTS 终端档案封面 · 明日选菜 */
-.prts-hero{{background:#0a0f0a;color:#3dd6b6;border:1px solid #2a4a3a;font:12px/1.7 'JetBrains Mono',Consolas,monospace;padding:22px 26px;margin-bottom:22px;position:relative;box-shadow:0 0 60px rgba(61,214,182,.05) inset;overflow:hidden}}
-.prts-hero::before{{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(61,214,182,.05) 1px,transparent 1px);background-size:100% 22px;pointer-events:none}}
-.prts-top{{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:11px;opacity:.85;border-bottom:1px solid #2a4a3a;padding-bottom:10px;margin-bottom:18px}}
-.prts-grid{{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;font-size:11px}}
-.prts-block div{{line-height:1.8}}
-.prts-bt{{color:#7fffce;opacity:.9}}
-.prts-bc{{color:#2a6a4a}}
-.prts-ep{{text-align:center;margin:6px 0 10px}}
-.prts-epnum{{color:#2a6a4a;letter-spacing:.5em;font-size:12px}}
-.prts-epbox{{color:#7fffce;font-size:12px;letter-spacing:.1em;margin:6px 0}}
-.prts-title{{font-family:Cinzel,serif;font-size:clamp(42px,7vw,76px);color:#3dd6b6;text-shadow:0 0 34px rgba(61,214,182,.4);margin:10px 0 4px;letter-spacing:.08em}}
-.prts-sub{{color:#7fffce;letter-spacing:.28em;font-size:12px}}
-.prts-quote{{color:#5a8a75;font-style:italic;font-size:12px;margin:14px 0 4px}}
-.prts-warn{{text-align:center;color:#ff758f;font-size:11px;margin:14px 0;letter-spacing:.05em}}
-.prts-ready{{display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap;border-top:1px solid #2a4a3a;padding-top:12px;font-size:11px}}
-.prts-bar{{color:#3dd6b6}}
-.prts-ref{{color:#5a8a75}}
-.prts-enter{{background:transparent;border:1px solid #3dd6b6;color:#3dd6b6;padding:8px 18px;font:11px 'JetBrains Mono',Consolas,monospace;cursor:pointer;letter-spacing:.1em}}
-.prts-enter:hover{{background:#3dd6b6;color:#0a0f0a}}
-@media(max-width:640px){{.prts-grid{{grid-template-columns:1fr}}.prts-top{{flex-direction:column}}}}
+/* 直到大地变成一颗酸橙 · 旅行封面 */
+.lime-hero{{--lime:#8FAE3B;--lime-deep:#5C7A1F;--sky:#B8E2F0;--sky-deep:#4A8CB5;--orange:#FF8C00;--cream:#FBF7EE;--ink-soft:#7A8A66;--gold:#D9B36A;position:relative;overflow:hidden;margin-bottom:22px;background:var(--cream);border:2px solid var(--lime);border-radius:0 0 24px 24px;box-shadow:0 12px 40px rgba(92,122,31,.15);cursor:pointer}}
+.lime-sky{{height:112px;background:linear-gradient(180deg,var(--sky),var(--cream));border-bottom:1px dashed var(--sky-deep);position:relative}}
+.lime-cloud{{position:absolute;background:#fff;border-radius:50%;opacity:.92}}
+.lime-cloud::before,.lime-cloud::after{{content:'';position:absolute;background:#fff;border-radius:50%}}
+.lime-cloud1{{width:64px;height:22px;top:28px;left:54px}}
+.lime-cloud1::before{{width:30px;height:30px;top:-14px;left:9px}}
+.lime-cloud1::after{{width:24px;height:24px;top:-9px;right:7px}}
+.lime-cloud2{{width:46px;height:16px;top:56px;right:92px;opacity:.7}}
+.lime-cloud2::before{{width:22px;height:22px;top:-11px;left:7px}}
+.lime-cloud2::after{{width:18px;height:18px;top:-7px;right:5px}}
+.lime-body{{position:relative;z-index:2;padding:26px 40px 20px;text-align:center}}
+.lime-badge{{display:inline-block;background:var(--orange);color:#fff;font:10px 'JetBrains Mono',monospace;letter-spacing:.28em;padding:4px 14px;border-radius:2px;margin-bottom:14px}}
+.lime-title{{font-family:Cinzel,serif;font-size:clamp(30px,5vw,54px);color:var(--lime-deep);letter-spacing:.06em;margin:4px 0;text-shadow:0 2px 0 rgba(92,122,31,.12)}}
+.lime-sub{{color:var(--ink-soft);font-size:12px;letter-spacing:.22em;margin-bottom:8px}}
+.lime-decor{{display:flex;align-items:center;gap:12px;margin:12px auto 8px;max-width:480px}}
+.lime-decor::before,.lime-decor::after{{content:'';flex:1;height:1px;background:var(--gold)}}
+.lime-decor span{{color:var(--orange);font-size:14px}}
+.lime-meta{{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:10px 0 6px;color:var(--ink-soft);font:11px 'JetBrains Mono',monospace}}
+.lime-meta b{{color:var(--lime-deep)}}
+.lime-quote{{color:var(--ink-soft);font-style:italic;font-size:11px;margin:8px 0 2px;letter-spacing:.05em}}
+.lime-fruit{{position:absolute;right:-36px;bottom:-22px;width:156px;height:156px;background:radial-gradient(circle at 35% 30%,#C4DE5C,var(--lime) 60%,var(--lime-deep));border-radius:50%;opacity:.16;z-index:0}}
+.lime-stamp{{position:absolute;top:130px;right:34px;width:70px;height:82px;z-index:3;border:2px solid var(--sky-deep);background:#fff;padding:6px;opacity:.9;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(8deg)}}
+.lime-stamp .img{{width:42px;height:42px;border-radius:50%;background:var(--lime);opacity:.4}}
+.lime-stamp .txt{{font-size:8px;color:var(--sky-deep);margin-top:5px;letter-spacing:1px;font-family:'JetBrains Mono',monospace}}
+.lime-foot{{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:12px 30px;border-top:2px solid var(--lime);background:var(--cream)}}
+.lime-foot .org{{font-size:11px;color:var(--ink-soft);letter-spacing:.18em}}
+.lime-foot .date{{font-size:11px;color:var(--ink-soft);font-family:'JetBrains Mono',monospace}}
+@media(max-width:640px){{.lime-stamp{{display:none}}.lime-meta{{flex-direction:column;gap:6px}}}}
 /* 三级别汇总 */
 .sum-wrap{{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:auto}}
 .sum-tb{{width:100%;border-collapse:collapse;font:12px 'JetBrains Mono',monospace;min-width:560px}}
@@ -436,25 +444,19 @@ footer{{text-align:center;color:var(--ink3);font:10px 'JetBrains Mono';margin:26
 @media(max-width:1000px){{.cards{{grid-template-columns:1fr 1fr}}}}
 @media(max-width:640px){{.cards{{grid-template-columns:1fr}}.strat-bar{{grid-template-columns:1fr}}}}
 </style></head><body><div class="shell">
-<header class="prts-hero" onclick="document.getElementById('tf-15min').scrollIntoView({{behavior:'smooth'}})" style="cursor:pointer" title="点击进入选品">
-<div class="prts-top"><span>[PRTS v4.82] SYSTEM ARCHIVE // RESTRICTED ACCESS</span><span>[SECURITY CLEARANCE: LEVEL 4 REQUIRED]</span></div>
-<div class="prts-grid">
-<div class="prts-block"><div class="prts-bt">+-- TACTICAL MONITOR --------+</div><div>LAT: 31°14' N &nbsp;LON: 121°28' E</div><div>CATASTROPHE RISK: CLASS IV</div><div>ORIGINIUM DENSITY: 0.84%</div><div>MARKET VOLATILITY: HIGH</div><div class="prts-bc">+----------------------------+</div></div>
-<div class="prts-block"><div class="prts-bt">+-- MISSION STATUS -+</div><div>SECTOR: 工业金属+新能源</div><div>UNIT: {len(universe)} 品种</div><div>LOG: ACTIVE · DATA {last_daily}</div><div>{sina_note}</div><div class="prts-bc">+-------------------+</div></div>
+<header class="lime-hero" onclick="document.getElementById('tf-15min').scrollIntoView({{behavior:'smooth'}})" title="点击进入选品">
+<div class="lime-sky"><div class="lime-cloud lime-cloud1"></div><div class="lime-cloud lime-cloud2"></div></div>
+<div class="lime-stamp"><div class="img"></div><div class="txt">FOUR-FRAME</div></div>
+<div class="lime-body">
+<span class="lime-badge">FOUR-FRAME DAILY · 旅行手帐</span>
+<div class="lime-title">四框架每日选品</div>
+<div class="lime-sub">缠论 / MACD-RSI / 江恩 / 量价 · 三级别扫描</div>
+<div class="lime-decor"><span>✦</span></div>
+<div class="lime-meta"><span>品种 <b>{len(universe)}</b></span><span>数据截至 <b>{last_daily}</b></span><span>{sina_note}</span><span>生成 <b>{now}</b></span></div>
+<div class="lime-quote">"在市场的影子之下,躺着的正是选择的重量。"</div>
 </div>
-<div class="prts-ep">
-<div class="prts-epnum">0 1 5</div>
-<div class="prts-epbox">+-------+<div>| EP.015 |</div>+-------+</div>
-<div class="prts-title">明日选菜</div>
-<div class="prts-sub">FOUR-FRAME DAILY SELECTION · 缠论 / MACD-RSI / 江恩 / 量价</div>
-<div class="prts-quote">"IN THE SHADOW OF THE MARKET, LIES THE BURDEN OF SELECTION."</div>
-</div>
-<div class="prts-warn">/// WARNING: 未经授权的操作将按协议07立即终止 ///</div>
-<div class="prts-ready">
-<div class="prts-bar">[||||||||||||||||||||||||||||||||] 100% READY</div>
-<div class="prts-ref">REF CODE: RI-015-PRTS-SYS · 生成 {now}</div>
-<button class="prts-enter" onclick="document.querySelector('.tabs').scrollIntoView({{behavior:'smooth'}})">[ ENTER OPERATION ]</button>
-</div>
+<div class="lime-fruit"></div>
+<div class="lime-foot"><span class="org">YONGAN RESEARCH · FOUR-FRAME</span><span class="date">{now}</span></div>
 </header>
 <nav class="tabs"><button class="active" onclick="showTf('15min',this)">15分钟</button><button onclick="showTf('60min',this)">60分钟</button><button onclick="showTf('日线',this)">日线</button><button onclick="showTf('sum',this)">🌐 汇总</button></nav>
 <div class="toolbar"><button onclick="exportCSV()">📥 导出CSV</button><button onclick="copyShare()">📋 复制分享</button></div>
